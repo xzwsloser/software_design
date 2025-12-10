@@ -112,6 +112,9 @@ class UrlManager:
         except Exception as e:
             print(f'Exception: {e}')
 
+    def get_number_of_urls(self):
+        return len(self.site_urls)
+
     def store_into_database(self):
         if not self.database or not self.database.open:
             self._connect_to_mysql()
@@ -128,6 +131,8 @@ class UrlManager:
         finally:
             cursor.close()
             self.database.close()
+
+        self.site_urls = []
 
     def fetch_from_database(self) -> List[str]:
         if not self.database or not self.database.open:
@@ -334,12 +339,16 @@ class HtmlParser:
                 images.append(image_url)
 
         # 8. 介绍信息
-        intro_p_tags = self.parser.find('div', class_=SITE_INTRO_CLASS_NAME).find('div').find_all('p')
-        if intro_p_tags:
-            for p_tag in intro_p_tags:
-                introduce += p_tag.text
-                if not p_tag.find('img'):
-                    introduce += '\n'
+        intro_p_tags_1 = self.parser.find('div', class_=SITE_INTRO_CLASS_NAME)
+        if intro_p_tags_1 is not None:
+            intro_p_tags_2 = intro_p_tags_1.find('div')
+            if intro_p_tags_2 is not None:
+                intro_p_tags = intro_p_tags_2.find_all('p')
+                if intro_p_tags:
+                    for p_tag in intro_p_tags:
+                        introduce += p_tag.text
+                        if not p_tag.find('img'):
+                            introduce += '\n'
 
         # 返回 site
         cur_site = Site(name=name,
@@ -398,11 +407,14 @@ class ClawlerController:
                 print('-'*10 + f'{idx + 1}' + '-'*10)
                 for url in cur_urls:
                     print(url)
+                
+                if self.url_manager.get_number_of_urls() >= 50 or total_num_of_urls >= MAX_URL_NUMBER:
+                    self.url_manager.store_into_database()
+
                 if total_num_of_urls >= MAX_URL_NUMBER:
                     print('-'*10 + 'End' + '-'*10)
                     print(f'total number of urls: {total_num_of_urls}')
                     break
-            self.url_manager.store_into_database()
 
         if if_parse_site:
             site_urls = self.url_manager.fetch_from_database()
@@ -421,6 +433,10 @@ class ClawlerController:
             site_urls = self.url_manager.fetch_from_database()
             for idx, site_url in enumerate(site_urls):
                 # 处理单个景点评论信息
+                # 注意到这里显示 548 已经插入了
+                # idx + 1 = 548 -> idx = 547
+                # 也就是 idx <= 547 的时候跳过就可以了
+                # 那么 idx < 548
                 if idx < comment_start_idx:
                     continue
                 cur_site_comments = self.parse_cur_comments(site_url)
@@ -478,6 +494,31 @@ class ClawlerController:
                     }
                 }
 
+                # payload_native = {
+                #     "arg": {
+                #         "channelType": 2,
+                #         "collapseType": 0,
+                #         "commentTagId": -12,
+                #         "pageIndex": 1,
+                #         "pageSize": 10,
+                #         "poiId": 75595,
+                #         "sourceType": 1,
+                #         "sortType": 3,
+                #         "starType": 0
+                #     },
+                #     "head": {
+                #         "cid": "09031179414218738290",
+                #         "ctok": "",
+                #         "cver": "1.0",
+                #         "lang": "01",
+                #         "sid": "8888",
+                #         "syscode": "09",
+                #         "auth": "",
+                #         "xsid": "",
+                #         "extension": []
+                #     }
+                # }
+
                 # 模拟浏览器发送请求
                 headers = {
                      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36",
@@ -495,8 +536,6 @@ class ClawlerController:
         return cur_site_comments
 
 
-
-
 if __name__ == '__main__':
     clawer = ClawlerController()
-    clawer.start(comment_start_idx= 161, if_parse_url=False, if_parse_site=False)
+    clawer.start()
