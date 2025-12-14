@@ -18,9 +18,15 @@ type DatabaseConfig struct {
 	Database	string  `json:"database"` 
 }
 
+type JwtConfig struct {
+	SerectKey	string 	`json:"serect"`
+	Issuer		string 	`json:"issuer"`
+}
+
 var (
-	serverConfig 	*ServerConfig = new(ServerConfig)
+	serverConfig 	*ServerConfig 	= new(ServerConfig)
 	databaseConfig  *DatabaseConfig = new(DatabaseConfig) 
+	jwtConfig 		*JwtConfig 		= new(JwtConfig)
 )
 
 func LoadConfig(filePath string) {
@@ -63,6 +69,16 @@ func LoadConfig(filePath string) {
 	if err != nil {
 		panic("Failed to transform to database config")
 	}
+
+	jwtJsonCode, err := json.Marshal(configDict["jwt"].(map[string]interface{}))
+	if err != nil {
+		panic("Failed to Fetch Jwt Config")
+	}
+
+	err = json.Unmarshal(jwtJsonCode, jwtConfig)
+	if err != nil {
+		panic("Failed to transform to jwt config")
+	}
 }
 
 func GetServerConfig() *ServerConfig {
@@ -71,4 +87,8 @@ func GetServerConfig() *ServerConfig {
 
 func GetDatabaseConfig() *DatabaseConfig {
 	return databaseConfig
+}
+
+func GetJwtConfig() *JwtConfig {
+	return jwtConfig
 }
