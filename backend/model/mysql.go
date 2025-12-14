@@ -3,6 +3,7 @@ package model
 import (
 	"fmt"
 	"github.com/jinzhu/gorm"
+	_ "gorm.io/driver/mysql"
 	"github.com/xzwsloser/software_design/backend/utils"
 )
 
@@ -16,7 +17,7 @@ var (
 
 func InitMysqlClient() {
 	databaseConfig := utils.GetDatabaseConfig()
-	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
+	url := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local",
 					   databaseConfig.User,
 					   databaseConfig.Password,
 					   databaseConfig.Addr,
@@ -26,6 +27,7 @@ func InitMysqlClient() {
 	db, err := gorm.Open(DATABASE, url)
 
 	if err != nil {
+		utils.GetLogger().Error(err.Error())
 		panic("Cannot connect to Mysql")
 	}
 

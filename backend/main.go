@@ -1,15 +1,17 @@
 package main
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/xzwsloser/software_design/backend/handler"
+	"github.com/xzwsloser/software_design/backend/model"
 	"github.com/xzwsloser/software_design/backend/utils"
-	"fmt"
 )
 
 func main() {
 	utils.LoadConfig("config.json")
 	utils.InitLogger()
+	model.InitMysqlClient()
 
 	r := gin.Default()
 	handler.InitRouter(r)

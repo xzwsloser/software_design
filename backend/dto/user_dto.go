@@ -1,7 +1,7 @@
 package dto
 
 type BasicUserInfo struct {
-	Id 			int64	`json:"id"`
+	Id 			int32	`json:"id"`
 	Username	string 	`json:"username"`
 }
 

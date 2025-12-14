@@ -11,3 +11,19 @@ type User struct {
 func (*User) TableName() string {
 	return "tb_user"
 }
+
+func (u *User) QueryByUsername() (User,error) {
+	var result User
+	err := GetMySqlClient().Table(u.TableName()).Where("username = ?", u.Username).First(&result).Error
+	return result, err
+}
+
+func (u *User) InsertUser() (error) {
+	err := GetMySqlClient().Table(u.TableName()).Create(u).Error
+	return err
+}
+
+func (u *User) UpdateByUserName() (error) {
+	err := GetMySqlClient().Table(u.TableName()).Where("username = ?", u.Username).Select("password", "gender", "city").Updates(u).Error
+	return err
+}
