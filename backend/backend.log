@@ -42,3 +42,4 @@
 [2025-12-15 18:39:25] [31m[error][0m jwt.go:107 github.com/xzwsloser/software_design/backend/handler.InitRouter.JwtAuth.func5 JWT Token is Empty 
 [2025-12-15 18:41:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
 [2025-12-15 19:01:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
+[2025-12-15 19:38:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 

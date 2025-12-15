@@ -106,10 +106,13 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSiteStore } from '../stores/siteStore'
+import { useSiteDetailStore } from '@/stores/siteDetail'
 import { ElMessage } from 'element-plus'
 
 const router = useRouter()
 const siteStore = useSiteStore()
+const siteDetailStore = useSiteDetailStore()
+
 
 // 从store获取响应式数据
 const sites = computed(() => siteStore.sites)
@@ -126,6 +129,7 @@ const pageNumbers = computed(() => siteStore.pageNumbers)
 const userInfo = ref({
   username: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).username : '游客'
 })
+
 
 // 获取景点第一张图片
 const getFirstImage = (images) => {
@@ -157,14 +161,15 @@ const goToPage = (page) => {
   }
 }
 
-// 跳转到景点详情页面
 const goToSiteDetail = (siteIndex) => {
+  // 传递值避免循环引用问题(currentPage 也是计算属性 ref, 所以需要传递值)
+  siteDetailStore.setPrevPageIndex(currentPage.value)
   router.push(`/sites/${siteIndex}`)
 }
 
 // 组件挂载时获取数据
 onMounted(() => {
-  siteStore.fetchSites()
+  siteStore.fetchSites(siteDetailStore.prevPageIdxInList, 10)
 })
 </script>
 

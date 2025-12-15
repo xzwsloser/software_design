@@ -135,6 +135,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useSiteDetailStore } from '@/stores/siteDetail'
 import { ElMessage } from 'element-plus'
 import api from '@/axios'
 import CommentSection from './CommentSection.vue'
@@ -153,6 +154,8 @@ import {
 
 const router = useRouter()
 const route = useRoute()
+
+const siteDetailStore = useSiteDetailStore()
 
 // 响应式数据
 const siteDetail = ref(null)
