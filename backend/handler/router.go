@@ -13,6 +13,9 @@ func InitRouter(r *gin.Engine) {
 		ctx.JSON(http.StatusOK, "pong")
 	})
 
+	// 解决跨域问题
+	r.Use(middleware.CorsAllow())
+
 	// 用户登录/注册
 	userRouter := r.Group("/user")
 	{
@@ -36,3 +39,6 @@ func InitRouter(r *gin.Engine) {
 		})
 	}
 }
+
+
+

@@ -17,3 +17,7 @@
 [2025-12-14 20:47:25] [31m[error][0m user.go:34 github.com/xzwsloser/software_design/backend/handler.(*UserHandler).Login User Record Not Find 
 [2025-12-14 20:49:25] [31m[error][0m user.go:55 github.com/xzwsloser/software_design/backend/handler.(*UserHandler).Register User Exists 
 [2025-12-14 20:51:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
+[2025-12-15 10:25:25] [31m[error][0m mysql.go:30 github.com/xzwsloser/software_design/backend/model.InitMysqlClient dial tcp [::1]:3306: connect: connection refused 
+[2025-12-15 10:26:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
+[2025-12-15 11:15:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
+[2025-12-15 11:16:25] [31m[error][0m user.go:55 github.com/xzwsloser/software_design/backend/handler.(*UserHandler).Register User Exists 
