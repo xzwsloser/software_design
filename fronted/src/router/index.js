@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import AuthView from '../components/AuthView.vue'
 import SiteList from '../components/SiteList.vue'
+import SiteDetail from '../components/SiteDetail.vue'
 
 const routes = [
   {
@@ -16,6 +17,12 @@ const routes = [
     path: '/sites',
     name: 'SiteList',
     component: SiteList,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/sites/:siteIndex',
+    name: 'SiteDetail',
+    component: SiteDetail,
     meta: { requiresAuth: true }
   }
 ]

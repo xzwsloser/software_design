@@ -37,3 +37,10 @@ func (*SiteService) QueryByPageParams(pageParams *dto.ScrollRequest) ([]dto.Site
 	return site_infos, nil
 }
 
+func (*SiteService) QueryByIndex(siteIndex int32) (model.Site, error) {
+	site := &model.Site{}
+	site.SiteIndex = siteIndex
+	cur_site, err := site.QueryByIndex()
+	return cur_site, err
+}
+

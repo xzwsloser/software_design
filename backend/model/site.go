@@ -22,3 +22,18 @@ func (s *Site) QueryByPage(offset int32, limit int32) ([]Site, error) {
 	err := GetMySqlClient().Table(s.TableName()).Limit(limit).Offset(offset).Find(&sites).Error
 	return sites, err
 }
+
+func (s *Site) QueryByIndex() (Site, error) {
+	var result Site
+	err := GetMySqlClient().Table(s.TableName()).Where("site_idx = ?", s.SiteIndex).First(&result).Error
+	return result, err
+}
+
+
+
+
+
+
+
+
+

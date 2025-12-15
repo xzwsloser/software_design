@@ -37,3 +37,8 @@ func InitMysqlClient() {
 func GetMySqlClient() *gorm.DB {
 	return _mysqlClient
 }
+
+
+
+
+

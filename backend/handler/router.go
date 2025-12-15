@@ -27,6 +27,7 @@ func InitRouter(r *gin.Engine) {
 	siteRouter := r.Group("/site", middleware.JwtAuth())
 	{
 		siteRouter.POST("/query/list", siteHandler.SitePageQuery)
+		siteRouter.GET("/query/:siteIndex", siteHandler.SiteQueryByIndex)
 	}
 
 	// 测试接口

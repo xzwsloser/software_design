@@ -32,6 +32,7 @@
             v-for="site in sites"
             :key="site.id"
             class="site-card"
+            @click="goToSiteDetail(site.siteIndex)"
           >
             <div class="site-image">
               <img :src="getFirstImage(site.images)" :alt="site.name" />
@@ -156,6 +157,11 @@ const goToPage = (page) => {
   }
 }
 
+// 跳转到景点详情页面
+const goToSiteDetail = (siteIndex) => {
+  router.push(`/sites/${siteIndex}`)
+}
+
 // 组件挂载时获取数据
 onMounted(() => {
   siteStore.fetchSites()
@@ -223,6 +229,7 @@ onMounted(() => {
   border: 1px solid rgba(255, 255, 255, 0.18);
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .site-card:hover {
