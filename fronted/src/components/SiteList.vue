@@ -94,7 +94,7 @@
 
           <!-- 页面信息 -->
           <div class="page-info">
-            <span>共 {{ total }} 条记录</span>
+            <span>共  1000 条记录</span>
           </div>
         </div>
       </div>

@@ -100,6 +100,11 @@
               </div>
             </div>
           </div>
+
+          <!-- 游客评价 -->
+          <div class="info-card">
+            <CommentSection :siteIndex="siteDetail?.siteIndex" />
+          </div>
         </div>
       </section>
     </main>
@@ -132,6 +137,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import api from '@/axios'
+import CommentSection from './CommentSection.vue'
 import {
   ArrowLeft,
   Star,
