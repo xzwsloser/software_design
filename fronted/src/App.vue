@@ -1,9 +1,9 @@
 <script setup>
-import AuthView from './components/AuthView.vue'
+// App.vue now uses router-view for routing
 </script>
 
 <template>
-  <AuthView />
+  <router-view />
 </template>
 
 <style>

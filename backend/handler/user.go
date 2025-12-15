@@ -41,6 +41,7 @@ func (*UserHandler) Login(c *gin.Context) {
 
 
 // @Description: 用户注册接口, 接受用户信息 返回 jwt token
+// POST
 func (*UserHandler) Register(c *gin.Context) {
 	var user model.User
 	err := c.ShouldBindJSON(&user)

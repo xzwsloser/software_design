@@ -23,6 +23,12 @@ func InitRouter(r *gin.Engine) {
 		userRouter.POST("/register", userHandler.Register)
 	}
 
+	// 景点相关接口
+	siteRouter := r.Group("/site", middleware.JwtAuth())
+	{
+		siteRouter.POST("/query/list", siteHandler.SitePageQuery)
+	}
+
 	// 测试接口
 	testRouter := r.Group("/test", middleware.JwtAuth())
 	{
@@ -39,6 +45,5 @@ func InitRouter(r *gin.Engine) {
 		})
 	}
 }
-
 
 

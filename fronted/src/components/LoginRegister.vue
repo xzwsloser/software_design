@@ -3,7 +3,7 @@
     <div class="form-card">
       <!-- 标题 -->
       <div class="title">
-        <h2>{{ isLogin ? '欢迎登录' : '欢迎注册' }}</h2>
+        <h2>可视化景点推荐系统</h2>
       </div>
 
       <!-- Tab切换 -->
@@ -153,6 +153,7 @@
 
 <script setup>
 import { ref, reactive, computed } from 'vue'
+import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '../stores/user'
 
@@ -160,7 +161,8 @@ import { useUserStore } from '../stores/user'
 const activeTab = ref('login')
 const isLogin = computed(() => activeTab.value === 'login')
 
-// 使用用户store
+// 使用路由和用户store
+const router = useRouter()
 const userStore = useUserStore()
 
 // 登录表单
@@ -346,7 +348,8 @@ const handleLogin = async () => {
     const result = await userStore.login(loginForm)
     if (result.success) {
       ElMessage.success('登录成功！')
-      // 可以在这里跳转到首页
+      // 跳转到景点列表页面
+      router.push('/sites')
     } else {
       ElMessage.error(result.error || '登录失败')
     }
@@ -385,7 +388,8 @@ const handleRegister = async () => {
     const result = await userStore.register(registerForm)
     if (result.success) {
       ElMessage.success('注册成功！')
-      // 可以在这里跳转到首页
+      // 跳转到景点列表页面
+      router.push('/sites')
     } else {
       ElMessage.error(result.error || '注册失败')
     }

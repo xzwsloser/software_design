@@ -1,0 +1,39 @@
+package service
+
+import (
+	"github.com/xzwsloser/software_design/backend/dto"
+	"github.com/xzwsloser/software_design/backend/model"
+)
+
+type SiteService struct {
+
+}
+
+func (*SiteService) QueryByPageParams(pageParams *dto.ScrollRequest) ([]dto.SiteBasicInfo, error) {
+	offset := (pageParams.PageIndex - 1)*pageParams.PageSize
+	limit  := pageParams.PageSize
+
+	s := &model.Site{}
+	sites, err := s.QueryByPage(offset, limit)
+
+	if err != nil {
+		return nil, err
+	}
+
+	site_infos := make([]dto.SiteBasicInfo, 0, len(sites))
+
+	for _, site := range sites {
+		site_infos = append(site_infos, dto.SiteBasicInfo{
+			Id: site.Id,
+			Name: site.Name,
+			Score: site.Score,
+			HotDegree: site.HotDegree,
+			Address: site.Address,
+			Images: site.Images,
+			SiteIndex: site.SiteIndex,
+		})
+	}
+
+	return site_infos, nil
+}
+
