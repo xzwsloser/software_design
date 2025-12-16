@@ -74,3 +74,29 @@
 [2025-12-16 15:24:25] [31m[error][0m site.go:84 github.com/xzwsloser/software_design/backend/handler.(*SiteHandler).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
 [2025-12-16 15:26:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
 [2025-12-16 15:26:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 16:03:25] [31m[error][0m mysql.go:30 github.com/xzwsloser/software_design/backend/model.InitMysqlClient dial tcp [::1]:3306: connect: connection refused 
+[2025-12-16 16:03:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 16:12:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:12:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:15:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:20:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 16:20:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 

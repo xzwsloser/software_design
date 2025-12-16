@@ -35,6 +35,9 @@
                 <el-icon><TrendCharts /></el-icon>
                 <span class="heat">{{ siteDetail.hotDegree }}</span>
               </div>
+              <div class="meta-item like-item">
+                <LikeButton :siteIndex="siteDetail.siteIndex" />
+              </div>
             </div>
             <div class="site-address">
               <el-icon><LocationInformation /></el-icon>
@@ -136,9 +139,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSiteDetailStore } from '@/stores/siteDetail'
+import { useLikeStore } from '@/stores/likeStore'
 import { ElMessage } from 'element-plus'
 import api from '@/axios'
 import CommentSection from './CommentSection.vue'
+import LikeButton from './LikeButton.vue'
 import {
   ArrowLeft,
   Star,
@@ -156,6 +161,7 @@ const router = useRouter()
 const route = useRoute()
 
 const siteDetailStore = useSiteDetailStore()
+const likeStore = useLikeStore()
 
 // 响应式数据
 const siteDetail = ref(null)
@@ -237,14 +243,6 @@ const fetchSiteDetail = async (siteIndex) => {
   error.value = null
 
   try {
-    // const token = localStorage.getItem('token')
-    // const response = await fetch(`http://localhost:8079/site/query/${siteIndex}`, {
-    //   method: 'GET',
-    //   headers: {
-    //     'Authorization': `Bearer ${token}`,
-    //     'Content-Type': 'application/json'
-    //   }
-    // })
     const response = await api.get(
       `/site/query/${siteIndex}`
     )
@@ -253,6 +251,9 @@ const fetchSiteDetail = async (siteIndex) => {
 
     if (data.success) {
       siteDetail.value = data.data
+
+      // 检查当前景点的点赞状态
+      await likeStore.checkSiteLikeStatus(siteIndex)
     } else {
       error.value = data.error || '获取景点详情失败'
     }
@@ -390,6 +391,8 @@ onMounted(() => {
   display: flex;
   gap: 2rem;
   margin-bottom: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
 }
 
 .meta-item {
@@ -398,6 +401,17 @@ onMounted(() => {
   gap: 0.5rem;
   font-size: 1.2rem;
   font-weight: 600;
+}
+
+.meta-item.like-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.meta-item.like-item:hover {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .meta-item .score {
@@ -572,6 +586,11 @@ onMounted(() => {
   .site-meta {
     gap: 1rem;
     flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .meta-item.like-item {
+    align-self: flex-start;
   }
 
   .site-info-section {
