@@ -16,6 +16,10 @@
             <el-icon><Star /></el-icon>
             <span>我的喜欢</span>
           </router-link>
+          <router-link to="/viewed-sites" class="nav-item">
+            <el-icon><View /></el-icon>
+            <span>我的足迹</span>
+          </router-link>
         </div>
         <div class="nav-item user-section">
           <span class="username">{{ userInfo.username }}</span>

@@ -1,10 +1,10 @@
 <template>
-  <div class="site-list-container">
+  <div class="viewed-sites-container">
     <!-- 导航栏 -->
     <nav class="nav-bar">
       <div class="nav-container">
         <div class="nav-center">
-          <router-link to="/sites" class="nav-item active">
+          <router-link to="/sites" class="nav-item">
             <el-icon><List /></el-icon>
             <span>景点列表</span>
           </router-link>
@@ -12,7 +12,7 @@
             <el-icon><Star /></el-icon>
             <span>我的喜欢</span>
           </router-link>
-          <router-link to="/viewed-sites" class="nav-item">
+          <router-link to="/viewed-sites" class="nav-item active">
             <el-icon><View /></el-icon>
             <span>我的足迹</span>
           </router-link>
@@ -41,11 +41,21 @@
         />
       </div>
 
-      <!-- 景点列表 -->
+      <!-- 空状态 -->
+      <div v-else-if="viewedSites.length === 0" class="empty-container">
+        <div class="empty-content">
+          <el-icon class="empty-icon"><View /></el-icon>
+          <h3>还没有浏览过任何景点</h3>
+          <p>快去景点列表发现精彩的景点吧！</p>
+          <el-button type="primary" @click="goToSiteList">浏览景点</el-button>
+        </div>
+      </div>
+
+      <!-- 浏览记录列表 -->
       <div v-else class="sites-wrapper">
         <div class="sites-grid">
           <div
-            v-for="site in sites"
+            v-for="site in viewedSites"
             :key="site.id"
             class="site-card"
             @click="goToSiteDetail(site.siteIndex)"
@@ -56,7 +66,7 @@
             <div class="site-info">
               <div class="site-header">
                 <h3 class="site-name">{{ site.name }}</h3>
-                <div class="viewed-badge" v-if="viewStore.isViewed(site.siteIndex)">
+                <div class="viewed-badge">
                   <el-icon><View /></el-icon>
                   <span>已浏览</span>
                 </div>
@@ -75,86 +85,32 @@
             </div>
           </div>
         </div>
-
-        <!-- 分页组件 -->
-        <div class="pagination-wrapper">
-          <div class="pagination">
-            <!-- 上一页按钮 -->
-            <button
-              class="pagination-nav-btn"
-              :disabled="!hasPrevPage"
-              @click="prevPage"
-            >
-              &lt;
-            </button>
-
-            <!-- 页码按钮 -->
-            <div class="page-numbers">
-              <button
-                v-for="page in pageNumbers"
-                :key="page"
-                :class="[
-                  'page-btn',
-                  { active: page === currentPage, 'ellipsis': page === '...' }
-                ]"
-                :disabled="page === '...'"
-                @click="goToPage(page)"
-              >
-                {{ page }}
-              </button>
-            </div>
-
-            <!-- 下一页按钮 -->
-            <button
-              class="pagination-nav-btn"
-              :disabled="!hasNextPage"
-              @click="nextPage"
-            >
-              &gt;
-            </button>
-          </div>
-
-          <!-- 页面信息 -->
-          <div class="page-info">
-            <span>共  1000 条记录</span>
-          </div>
-        </div>
       </div>
     </main>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useSiteStore } from '../stores/siteStore'
+import { useViewStore } from '../stores/viewStore'
 import { useSiteDetailStore } from '@/stores/siteDetail'
-import { useViewStore } from '@/stores/viewStore'
 import { ElMessage } from 'element-plus'
 import { View, List, Star } from '@element-plus/icons-vue'
 
 const router = useRouter()
-const siteStore = useSiteStore()
-const siteDetailStore = useSiteDetailStore()
 const viewStore = useViewStore()
+const siteDetailStore = useSiteDetailStore()
 
-
-// 从store获取响应式数据
-const sites = computed(() => siteStore.sites)
-const currentPage = computed(() => siteStore.currentPage)
-const totalPages = computed(() => siteStore.totalPages)
-const total = computed(() => siteStore.total)
-const loading = computed(() => siteStore.loading)
-const error = computed(() => siteStore.error)
-const hasPrevPage = computed(() => siteStore.hasPrevPage)
-const hasNextPage = computed(() => siteStore.hasNextPage)
-const pageNumbers = computed(() => siteStore.pageNumbers)
+// 响应式数据
+const viewedSites = ref([])
+const loading = ref(false)
+const error = ref(null)
 
 // 用户信息
 const userInfo = ref({
   username: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).username : '游客'
 })
-
 
 // 获取景点第一张图片
 const getFirstImage = (images) => {
@@ -171,51 +127,91 @@ const logout = () => {
   router.push('/login')
 }
 
-// 分页方法
-const nextPage = () => {
-  siteStore.nextPage()
+// 跳转到景点列表
+const goToSiteList = () => {
+  router.push('/sites')
 }
 
-const prevPage = () => {
-  siteStore.prevPage()
-}
-
-const goToPage = (page) => {
-  if (page !== '...') {
-    siteStore.goToPage(page)
-  }
-}
-
+// 跳转到景点详情页
 const goToSiteDetail = (siteIndex) => {
-  // 传递值避免循环引用问题(currentPage 也是计算属性 ref, 所以需要传递值)
-  siteDetailStore.setPrevPageIndex(currentPage.value)
+  siteDetailStore.setPrevPageIndex(1)
   router.push(`/sites/${siteIndex}`)
+}
+
+// 获取浏览记录的景点详细信息
+const fetchViewedSitesDetails = async () => {
+  try {
+    loading.value = true
+    error.value = null
+
+    // 首先获取浏览记录中的景点索引列表
+    const viewResponse = await fetch('http://localhost:9999/view/siteList', {
+      headers: {
+        'Authorization': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      }
+    })
+
+    if (!viewResponse.ok) {
+      throw new Error('获取浏览记录失败')
+    }
+
+    const viewData = await viewResponse.json()
+
+    if (!viewData.success) {
+      throw new Error(viewData.error || '获取浏览记录失败')
+    }
+
+    const siteIndexList = viewData.data.data || []
+
+    if (siteIndexList.length === 0) {
+      viewedSites.value = []
+      return
+    }
+
+    // 根据景点索引列表获取景点详细信息
+    const siteResponse = await fetch('http://localhost:9999/site/query/siteList', {
+      method: 'POST',
+      headers: {
+        'Authorization': localStorage.getItem('token'),
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        siteIndexList: siteIndexList
+      })
+    })
+
+    if (!siteResponse.ok) {
+      throw new Error('获取景点详情失败')
+    }
+
+    const siteData = await siteResponse.json()
+
+    if (!siteData.success) {
+      throw new Error(siteData.error || '获取景点详情失败')
+    }
+
+    viewedSites.value = siteData.data.data || []
+  } catch (err) {
+    error.value = err.message || '网络错误，获取浏览记录失败'
+    console.error('Error fetching viewed sites:', err)
+  } finally {
+    loading.value = false
+  }
 }
 
 // 组件挂载时获取数据
 onMounted(() => {
-  siteStore.fetchSites(siteDetailStore.prevPageIdxInList, 10)
-  // 获取用户的浏览记录
+  // 同时获取浏览记录状态和详细信息
   viewStore.fetchViewedSites()
+  fetchViewedSitesDetails()
 })
 </script>
 
 <style scoped>
-.site-list-container {
+.viewed-sites-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.user-info span {
-  font-weight: 500;
-  color: #666;
 }
 
 /* 导航栏样式 */
@@ -298,16 +294,39 @@ onMounted(() => {
 }
 
 .loading-container,
-.error-container {
+.error-container,
+.empty-container {
   text-align: center;
   padding: 3rem;
+}
+
+.empty-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-content h3 {
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.empty-content p {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
 }
 
 .sites-grid {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  margin-bottom: 3rem;
 }
 
 .site-card {
@@ -423,102 +442,6 @@ onMounted(() => {
   color: #e74c3c;
 }
 
-/* 分页样式 */
-.pagination-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-}
-
-.pagination {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.pagination-nav-btn {
-  width: 32px;
-  height: 32px;
-  border: 1px solid #ddd;
-  background: white;
-  color: #666;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 1rem;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pagination-nav-btn:hover:not(:disabled) {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
-}
-
-.pagination-nav-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.page-numbers {
-  display: flex;
-  gap: 0.25rem;
-  margin: 0 0.5rem;
-}
-
-.page-btn {
-  min-width: 32px;
-  height: 32px;
-  border: 1px solid #ddd;
-  background: white;
-  color: #333;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-size: 0.9rem;
-  padding: 0 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.page-btn:hover:not(.ellipsis):not(:disabled) {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
-}
-
-.page-btn.active {
-  background: #667eea;
-  color: white;
-  border-color: #667eea;
-}
-
-.page-btn.ellipsis {
-  border: none;
-  background: transparent;
-  cursor: default;
-  color: #999;
-}
-
-.page-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.page-info {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 0.9rem;
-}
-
 @media (max-width: 768px) {
   .sites-grid {
     gap: 1rem;
@@ -543,7 +466,6 @@ onMounted(() => {
     margin-left: 0;
   }
 
-  
   .nav-container {
     padding: 0 1rem;
     gap: 1rem;
@@ -556,17 +478,6 @@ onMounted(() => {
 
   .main-content {
     padding: 1rem;
-  }
-
-  .pagination {
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .page-info {
-    flex-direction: column;
-    text-align: center;
-    gap: 0.5rem;
   }
 }
 </style>
