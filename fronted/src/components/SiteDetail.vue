@@ -38,6 +38,10 @@
               <div class="meta-item like-item">
                 <LikeButton :siteIndex="siteDetail.siteIndex" />
               </div>
+              <div class="meta-item viewed-item" v-if="viewStore.isViewed(siteDetail.siteIndex)">
+                <el-icon><View /></el-icon>
+                <span class="viewed-text">已浏览</span>
+              </div>
             </div>
             <div class="site-address">
               <el-icon><LocationInformation /></el-icon>
@@ -140,6 +144,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useSiteDetailStore } from '@/stores/siteDetail'
 import { useLikeStore } from '@/stores/likeStore'
+import { useViewStore } from '@/stores/viewStore'
 import { ElMessage } from 'element-plus'
 import api from '@/axios'
 import CommentSection from './CommentSection.vue'
@@ -154,7 +159,8 @@ import {
   Clock,
   Phone,
   Picture,
-  ZoomIn
+  ZoomIn,
+  View
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
@@ -162,6 +168,7 @@ const route = useRoute()
 
 const siteDetailStore = useSiteDetailStore()
 const likeStore = useLikeStore()
+const viewStore = useViewStore()
 
 // 响应式数据
 const siteDetail = ref(null)
@@ -254,6 +261,9 @@ const fetchSiteDetail = async (siteIndex) => {
 
       // 检查当前景点的点赞状态
       await likeStore.checkSiteLikeStatus(siteIndex)
+
+      // 记录浏览记录（静默记录，不显示提示）
+      await viewStore.recordView(siteIndex)
     } else {
       error.value = data.error || '获取景点详情失败'
     }
@@ -412,6 +422,17 @@ onMounted(() => {
 
 .meta-item.like-item:hover {
   background: rgba(255, 255, 255, 0.2);
+}
+
+.meta-item.viewed-item {
+  background: rgba(76, 175, 80, 0.2);
+  border-radius: 50px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 175, 80, 0.3);
+}
+
+.meta-item.viewed-item .viewed-text {
+  color: #4CAF50;
 }
 
 .meta-item .score {

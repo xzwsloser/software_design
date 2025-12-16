@@ -100,3 +100,16 @@
 [2025-12-16 16:15:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
 [2025-12-16 16:20:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
 [2025-12-16 16:20:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 16:48:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 16:49:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 2 
+[2025-12-16 16:49:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 1 
+[2025-12-16 16:49:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 3 
+[2025-12-16 16:49:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 5 
+[2025-12-16 16:49:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 8 
+[2025-12-16 16:50:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 8 
+[2025-12-16 16:50:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 16 
+[2025-12-16 16:50:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 1 
+[2025-12-16 16:50:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 2 
+[2025-12-16 16:51:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 4 has visited the Site 1 
+[2025-12-16 16:52:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 4 has visited the Site 12 
+[2025-12-16 16:52:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 4 has visited the Site 12 

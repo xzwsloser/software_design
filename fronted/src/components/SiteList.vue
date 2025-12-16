@@ -38,7 +38,13 @@
               <img :src="getFirstImage(site.images)" :alt="site.name" />
             </div>
             <div class="site-info">
-              <h3 class="site-name">{{ site.name }}</h3>
+              <div class="site-header">
+                <h3 class="site-name">{{ site.name }}</h3>
+                <div class="viewed-badge" v-if="viewStore.isViewed(site.siteIndex)">
+                  <el-icon><View /></el-icon>
+                  <span>已浏览</span>
+                </div>
+              </div>
               <p class="site-address">{{ site.address }}</p>
               <div class="site-stats">
                 <div class="stat-item">
@@ -107,11 +113,14 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSiteStore } from '../stores/siteStore'
 import { useSiteDetailStore } from '@/stores/siteDetail'
+import { useViewStore } from '@/stores/viewStore'
 import { ElMessage } from 'element-plus'
+import { View } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const siteStore = useSiteStore()
 const siteDetailStore = useSiteDetailStore()
+const viewStore = useViewStore()
 
 
 // 从store获取响应式数据
@@ -170,6 +179,8 @@ const goToSiteDetail = (siteIndex) => {
 // 组件挂载时获取数据
 onMounted(() => {
   siteStore.fetchSites(siteDetailStore.prevPageIdxInList, 10)
+  // 获取用户的浏览记录
+  viewStore.fetchViewedSites()
 })
 </script>
 
@@ -265,12 +276,39 @@ onMounted(() => {
   flex: 1;
 }
 
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+}
+
 .site-name {
   font-size: 1.25rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 0.5rem;
   line-height: 1.4;
+  flex: 1;
+  margin: 0;
+}
+
+.viewed-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background: rgba(76, 175, 80, 0.1);
+  color: #4CAF50;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  border: 1px solid rgba(76, 175, 80, 0.2);
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+.viewed-badge .el-icon {
+  font-size: 0.8rem;
 }
 
 .site-address {
@@ -418,6 +456,16 @@ onMounted(() => {
   .site-image {
     width: 100%;
     height: 200px;
+  }
+
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .viewed-badge {
+    margin-left: 0;
   }
 
   .header {
