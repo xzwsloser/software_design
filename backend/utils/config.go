@@ -23,10 +23,17 @@ type JwtConfig struct {
 	Issuer		string 	`json:"issuer"`
 }
 
+type RedisConfig struct {
+	Addr 	string	`json:"addr"`
+	Port 	int32	`json:"port"`
+	DB 		int32	`json:"db"`
+}
+
 var (
 	serverConfig 	*ServerConfig 	= new(ServerConfig)
 	databaseConfig  *DatabaseConfig = new(DatabaseConfig) 
 	jwtConfig 		*JwtConfig 		= new(JwtConfig)
+	redisConfig 	*RedisConfig    = new(RedisConfig)
 )
 
 func LoadConfig(filePath string) {
@@ -79,6 +86,16 @@ func LoadConfig(filePath string) {
 	if err != nil {
 		panic("Failed to transform to jwt config")
 	}
+
+	redisJsonCode, err := json.Marshal(configDict["redis"].(map[string]interface{}))
+	if err != nil {
+		panic("Failed to Fetch Redis Config")
+	}
+
+	err = json.Unmarshal(redisJsonCode, redisConfig)
+	if err != nil {
+		panic("Failed to transform to redis config")
+	}
 }
 
 func GetServerConfig() *ServerConfig {
@@ -91,4 +108,8 @@ func GetDatabaseConfig() *DatabaseConfig {
 
 func GetJwtConfig() *JwtConfig {
 	return jwtConfig
+}
+
+func GetRedisConfig() *RedisConfig {
+	return redisConfig
 }

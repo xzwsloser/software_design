@@ -39,6 +39,16 @@ func InitRouter(r *gin.Engine) {
 		commentRouter.GET("/count/negative/:siteIndex", commentHandler.CountNegativeComment)
 	}
 
+	// 点赞相关接口
+	likeRouter := r.Group("/like", middleware.JwtAuth())
+	{
+		likeRouter.GET("/like/:siteIndex", likeHandler.Like)
+		likeRouter.GET("/cancel/:siteIndex", likeHandler.CancelLike)
+		likeRouter.GET("/isLike/:siteIndex", likeHandler.IsLikeSite)
+		likeRouter.GET("/siteList", likeHandler.QuerySiteLikedByUser)
+		likeRouter.GET("/userList/:siteIndex", likeHandler.QueryUserListLikedSite)
+	}
+
 	// 测试接口
 	testRouter := r.Group("/test", middleware.JwtAuth())
 	{
@@ -55,7 +65,5 @@ func InitRouter(r *gin.Engine) {
 		})
 	}
 }
-
-
 
 

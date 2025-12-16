@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/xzwsloser/software_design/backend/cache"
 	"github.com/xzwsloser/software_design/backend/handler"
 	"github.com/xzwsloser/software_design/backend/model"
 	"github.com/xzwsloser/software_design/backend/utils"
@@ -12,6 +13,7 @@ func main() {
 	utils.LoadConfig("config.json")
 	utils.InitLogger()
 	model.InitMysqlClient()
+	cache.InitRedisClient()
 
 	r := gin.Default()
 	handler.InitRouter(r)

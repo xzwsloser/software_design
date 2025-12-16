@@ -43,3 +43,12 @@
 [2025-12-15 18:41:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
 [2025-12-15 19:01:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
 [2025-12-15 19:38:25] [36m[info][0m main.go:20 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 11:41:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 11:50:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 11:51:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 11:51:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 11:52:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 11:52:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 11:53:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
+[2025-12-16 11:53:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
+[2025-12-16 11:58:25] [31m[error][0m jwt.go:107 github.com/xzwsloser/software_design/backend/handler.InitRouter.JwtAuth.func6 JWT Token is Empty 

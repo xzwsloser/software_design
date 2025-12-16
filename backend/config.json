@@ -14,6 +14,12 @@
     "jwt": {
         "serect": "software_design_key",
         "issuer": "xzw"
+    },
+
+    "redis": {
+        "addr": "localhost",
+        "port": 6379,
+        "db": 0
     }
 }
 
