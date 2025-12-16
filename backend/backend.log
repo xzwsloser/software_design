@@ -52,3 +52,25 @@
 [2025-12-16 11:53:25] [31m[error][0m like_service.go:32 github.com/xzwsloser/software_design/backend/service.(*LikeService).Like The Site is Liked By User 
 [2025-12-16 11:53:25] [31m[error][0m like.go:47 github.com/xzwsloser/software_design/backend/handler.(*LikeHandler).Like The Site is Liked By User 
 [2025-12-16 11:58:25] [31m[error][0m jwt.go:107 github.com/xzwsloser/software_design/backend/handler.InitRouter.JwtAuth.func6 JWT Token is Empty 
+[2025-12-16 14:16:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 14:19:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 4 has visited the Site 1 
+[2025-12-16 14:19:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 4 has visited the Site 2 
+[2025-12-16 14:20:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 4 has visited the Site 2 
+[2025-12-16 14:22:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 14:28:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 14:48:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 3 
+[2025-12-16 15:14:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 15:16:25] [31m[error][0m site_service.go:52 github.com/xzwsloser/software_design/backend/service.(*SiteService).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:16:25] [31m[error][0m site.go:84 github.com/xzwsloser/software_design/backend/handler.(*SiteHandler).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:16:25] [31m[error][0m site_service.go:52 github.com/xzwsloser/software_design/backend/service.(*SiteService).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:16:25] [31m[error][0m site.go:84 github.com/xzwsloser/software_design/backend/handler.(*SiteHandler).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:19:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 15:20:25] [31m[error][0m site_service.go:57 github.com/xzwsloser/software_design/backend/service.(*SiteService).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:20:25] [31m[error][0m site.go:84 github.com/xzwsloser/software_design/backend/handler.(*SiteHandler).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:22:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 15:23:25] [31m[error][0m site_service.go:57 github.com/xzwsloser/software_design/backend/service.(*SiteService).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:24:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 15:24:25] [31m[error][0m site_service.go:57 github.com/xzwsloser/software_design/backend/service.(*SiteService).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:24:25] [31m[error][0m site.go:84 github.com/xzwsloser/software_design/backend/handler.(*SiteHandler).QueryBySiteIndexList Error 1064 (42000): You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near '?,?,?,?)' at line 1 
+[2025-12-16 15:26:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 15:26:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 

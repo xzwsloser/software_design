@@ -29,11 +29,10 @@ func (s *Site) QueryByIndex() (Site, error) {
 	return result, err
 }
 
-
-
-
-
-
-
+func (s *Site) QueryBySiteIndexes(siteIndexList []int32) ([]Site, error) {
+	var sites []Site
+	err := GetMySqlClient().Table(s.TableName()).Where("`site_idx` IN (?)", siteIndexList).Find(&sites).Error
+	return sites, err
+}
 
 

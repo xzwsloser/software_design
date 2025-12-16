@@ -28,6 +28,7 @@ func InitRouter(r *gin.Engine) {
 	{
 		siteRouter.POST("/query/list", siteHandler.SitePageQuery)
 		siteRouter.GET("/query/:siteIndex", siteHandler.SiteQueryByIndex)
+		siteRouter.POST("/query/siteList", siteHandler.QueryBySiteIndexList)
 	}
 
 	// 评论相关接口
@@ -47,6 +48,14 @@ func InitRouter(r *gin.Engine) {
 		likeRouter.GET("/isLike/:siteIndex", likeHandler.IsLikeSite)
 		likeRouter.GET("/siteList", likeHandler.QuerySiteLikedByUser)
 		likeRouter.GET("/userList/:siteIndex", likeHandler.QueryUserListLikedSite)
+	}
+
+	// 浏览记录相关接口
+	viewRouter := r.Group("/view", middleware.JwtAuth())
+	{
+		viewRouter.GET("/view/:siteIndex", viewHandler.View)
+		viewRouter.GET("/siteList", viewHandler.GetVisitedSiteList)
+		viewRouter.GET("/userList/:siteIndex", viewHandler.GetUserList)
 	}
 
 	// 测试接口

@@ -67,6 +67,32 @@ func (*SiteHandler) SiteQueryByIndex(c *gin.Context) {
 	c.JSON(http.StatusOK, dto.OkWithData(site))
 }
 
+// @Description: 根据景点索引列表查询景点信息
+// url: /query/siteList
+// method: POST
+func (*SiteHandler) QueryBySiteIndexList(c *gin.Context) {
+	var req dto.SiteQueryReq
+	err := c.ShouldBindJSON(&req)
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		c.JSON(http.StatusOK, dto.Fail("cannot bind req"))
+		return
+	}
+
+	results, err := siteService.QueryBySiteIndexList(req.SiteIndexList)
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		c.JSON(http.StatusOK, dto.Fail("Failed to query sites"))
+		return
+	}
+
+	resp := dto.ScrollResp[dto.SiteBasicInfo] {
+		Data: results,
+		Total: int32(len(results)),
+	}
+
+	c.JSON(http.StatusOK, dto.OkWithData(resp))
+}
 
 
 
