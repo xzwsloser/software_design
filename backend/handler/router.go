@@ -23,6 +23,11 @@ func InitRouter(r *gin.Engine) {
 		userRouter.POST("/register", userHandler.Register)
 	}
 
+	userInfoRouter := r.Group("/userInfo", middleware.JwtAuth())
+	{
+		userInfoRouter.GET("/user", userInfoHandler.GetUserInfo)
+	}
+
 	// 景点相关接口
 	siteRouter := r.Group("/site", middleware.JwtAuth())
 	{

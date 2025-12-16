@@ -16,6 +16,10 @@
             <el-icon><View /></el-icon>
             <span>我的足迹</span>
           </router-link>
+          <router-link to="/user-info" class="nav-item">
+            <el-icon><User /></el-icon>
+            <span>我的信息</span>
+          </router-link>
         </div>
         <div class="nav-item user-section">
           <span class="username">{{ userInfo.username }}</span>
@@ -131,7 +135,7 @@ import { useSiteStore } from '../stores/siteStore'
 import { useSiteDetailStore } from '@/stores/siteDetail'
 import { useViewStore } from '@/stores/viewStore'
 import { ElMessage } from 'element-plus'
-import { View, List, Star } from '@element-plus/icons-vue'
+import { View, List, Star, User } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const siteStore = useSiteStore()

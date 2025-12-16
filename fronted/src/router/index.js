@@ -4,6 +4,7 @@ import SiteList from '../components/SiteList.vue'
 import SiteDetail from '../components/SiteDetail.vue'
 import LikedSites from '../components/LikedSites.vue'
 import ViewedSites from '../components/ViewedSites.vue'
+import UserInfo from '../components/UserInfo.vue'
 
 const routes = [
   {
@@ -37,6 +38,12 @@ const routes = [
     path: '/viewed-sites',
     name: 'ViewedSites',
     component: ViewedSites,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/user-info',
+    name: 'UserInfo',
+    component: UserInfo,
     meta: { requiresAuth: true }
   }
 ]

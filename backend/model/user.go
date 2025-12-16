@@ -27,3 +27,4 @@ func (u *User) UpdateByUserName() (error) {
 	err := GetMySqlClient().Table(u.TableName()).Where("username = ?", u.Username).Select("password", "gender", "city").Updates(u).Error
 	return err
 }
+

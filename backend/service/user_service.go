@@ -7,6 +7,7 @@ import (
 	"github.com/xzwsloser/software_design/backend/dto"
 	"github.com/xzwsloser/software_design/backend/middleware"
 	"github.com/xzwsloser/software_design/backend/model"
+	"github.com/xzwsloser/software_design/backend/utils"
 )
 
 type UserService struct {
@@ -78,3 +79,16 @@ func (*UserService) Register(user *model.User) (string, error) {
 
 	return jwtToken, nil
 }
+
+func (*UserService) GetCurrentUserInfo(username string) (model.User, error) {
+	u := &model.User{}
+	u.Username = username
+	matchedUser, err := u.QueryByUsername()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return model.User{}, err
+	}
+
+	return matchedUser, err
+}
+

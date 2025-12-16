@@ -20,6 +20,10 @@
             <el-icon><View /></el-icon>
             <span>我的足迹</span>
           </router-link>
+          <router-link to="/user-info" class="nav-item">
+            <el-icon><User /></el-icon>
+            <span>我的信息</span>
+          </router-link>
         </div>
         <div class="nav-item user-section">
           <span class="username">{{ userInfo.username }}</span>
@@ -98,7 +102,7 @@ import { useRouter } from 'vue-router'
 import { useLikeStore } from '@/stores/likeStore'
 import { useSiteDetailStore } from '@/stores/siteDetail'
 import { ElMessage } from 'element-plus'
-import { List, Star, StarFilled } from '@element-plus/icons-vue'
+import { List, Star, StarFilled, User, View } from '@element-plus/icons-vue'
 import api from '@/axios'
 
 const router = useRouter()

@@ -43,7 +43,3 @@ func (c *CommentNegative) CountNegativeComment() (int64, error) {
 	err := GetMySqlClient().Table(c.TableName()).Where("site_idx = ?", c.SiteIndex).Count(&count).Error
 	return count, err
 }
-
-
-
-
