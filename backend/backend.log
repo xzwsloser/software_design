@@ -126,3 +126,5 @@
 [2025-12-16 17:38:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 2 
 [2025-12-16 18:00:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
 [2025-12-16 18:15:25] [37m[debug][0m view_service.go:26 github.com/xzwsloser/software_design/backend/service.(*ViewService).View User: 3 has visited the Site 1 
+[2025-12-16 18:26:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 
+[2025-12-16 18:36:25] [36m[info][0m main.go:22 main.main Gin Server Listen At localhost:9999 

@@ -19,8 +19,12 @@
                 v-model="loginForm.username"
                 placeholder="用户名"
                 size="large"
-                prefix-icon="User"
-              />
+              >
+                <template #prefix>
+                  <el-icon><User /></el-icon>
+                </template> 
+              </el-input>
+
             </el-form-item>
             <el-form-item>
               <el-input
@@ -28,9 +32,12 @@
                 type="password"
                 placeholder="密码"
                 size="large"
-                prefix-icon="Lock"
                 show-password
-              />
+              >
+              <template #prefix>
+                <el-icon><Lock /></el-icon>
+              </template>
+            </el-input>
             </el-form-item>
 
             <el-form-item>
@@ -57,8 +64,11 @@
                 v-model="registerForm.username"
                 placeholder="用户名"
                 size="large"
-                prefix-icon="User"
-              />
+              >
+              <template #prefix>
+                <el-icon><User /></el-icon>
+              </template>
+            </el-input>
             </el-form-item>
 
             <el-form-item>
@@ -96,7 +106,7 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item v-if="selectedProvince">
+            <el-form-item v-if="selectedProvince && currentCities.length !== 0">
               <el-select
                 v-model="registerForm.city"
                 placeholder="请选择城市"
@@ -118,9 +128,12 @@
                 type="password"
                 placeholder="密码"
                 size="large"
-                prefix-icon="Lock"
                 show-password
-              />
+              >
+              <template #prefix>
+                <el-icon><Lock /></el-icon>
+              </template>
+            </el-input>
             </el-form-item>
 
             <el-form-item>
@@ -129,9 +142,12 @@
                 type="password"
                 placeholder="确认密码"
                 size="large"
-                prefix-icon="Lock"
                 show-password
-              />
+              >
+              <template #prefix>
+                <el-icon><Lock /></el-icon>
+              </template>
+            </el-input>
             </el-form-item>
 
             <el-form-item>
@@ -156,6 +172,7 @@ import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '../stores/user'
+import { User, Lock } from '@element-plus/icons-vue'
 
 // Tab切换
 const activeTab = ref('login')
@@ -179,11 +196,13 @@ const selectedProvince = ref('')
 const cities = [
   {
     name: '北京市',
-    cities: ['东城区', '西城区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区', '密云区', '延庆区']
+    // cities: ['东城区', '西城区', '朝阳区', '丰台区', '石景山区', '海淀区', '门头沟区', '房山区', '通州区', '顺义区', '昌平区', '大兴区', '怀柔区', '平谷区', '密云区', '延庆区']
+    cities: []
   },
   {
     name: '天津市',
-    cities: ['和平区', '河东区', '河西区', '南开区', '河北区', '红桥区', '东丽区', '西青区', '津南区', '北辰区', '武清区', '宝坻区', '滨海新区', '宁河区', '静海区', '蓟州区']
+    // cities: ['和平区', '河东区', '河西区', '南开区', '河北区', '红桥区', '东丽区', '西青区', '津南区', '北辰区', '武清区', '宝坻区', '滨海新区', '宁河区', '静海区', '蓟州区']
+    cities: []
   },
   {
     name: '河北省',
@@ -211,7 +230,8 @@ const cities = [
   },
   {
     name: '上海市',
-    cities: ['黄浦区', '徐汇区', '长宁区', '静安区', '普陀区', '虹口区', '杨浦区', '闵行区', '宝山区', '嘉定区', '浦东新区', '金山区', '松江区', '青浦区', '奉贤区', '崇明区']
+    // cities: ['黄浦区', '徐汇区', '长宁区', '静安区', '普陀区', '虹口区', '杨浦区', '闵行区', '宝山区', '嘉定区', '浦东新区', '金山区', '松江区', '青浦区', '奉贤区', '崇明区']
+    cities: []
   },
   {
     name: '江苏省',
@@ -263,7 +283,9 @@ const cities = [
   },
   {
     name: '重庆市',
-    cities: ['渝中区', '万州区', '涪陵区', '大渡口区', '江北区', '沙坪坝区', '九龙坡区', '南岸区', '北碚区', '綦江区', '大足区', '渝北区', '巴南区', '黔江区', '长寿区', '江津区', '合川区', '永川区', '南川区', '璧山区', '铜梁区', '潼南区', '荣昌区', '开州区', '梁平区', '武隆区']
+    // cities: ['渝中区', '万州区', '涪陵区', '大渡口区', '江北区', '沙坪坝区', '九龙坡区', '南岸区', '北碚区', '綦江区', '大足区', '渝北区', '巴南区', '黔江区', '长寿区', '江津区', '合川区', '永川区', '南川区', '璧山区', '铜梁区', '潼南区', '荣昌区', '开州区', '梁平区', '武隆区']
+    cities: []
+
   },
   {
     name: '四川省',
@@ -303,6 +325,8 @@ const cities = [
   }
 ]
 
+const specialCities = new Set(['北京市', '天津市', '重庆市', '上海市' ])
+
 // 注册表单
 const registerForm = reactive({
   username: '',
@@ -313,11 +337,11 @@ const registerForm = reactive({
 })
 
 // 选中的地区
-const areaName = computed(() => {
-  if (!selectedProvince.value && !registerForm.city) return ''
-  if (!registerForm.city) return selectedProvince
-  return `${selectedProvince}${registerForm.city}`
-})
+// const areaName = computed(() => {
+//   if (!selectedProvince.value && !registerForm.city) return ''
+//   if (!registerForm.city) return selectedProvince
+//   return `${selectedProvince}${registerForm.city}`
+// })
 
 // 当前选中的省份对应的城市列表
 const currentCities = computed(() => {
@@ -377,9 +401,12 @@ const handleRegister = async () => {
   }
 
   if (!selectedProvince.value || !registerForm.city) {
-    ElMessage.error('请选择省份和城市')
-    return
+    if (!specialCities.has(selectedProvince.value)) {
+      ElMessage.error('请选择省份和城市')
+      return
+    }
   }
+
 
   // 添加省份信息到注册表单
   registerForm.province = selectedProvince.value
