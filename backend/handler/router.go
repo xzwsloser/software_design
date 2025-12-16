@@ -16,20 +16,22 @@ func InitRouter(r *gin.Engine) {
 	// 解决跨域问题
 	r.Use(middleware.CorsAllow())
 
+	api := r.Group("/api")
+
 	// 用户登录/注册
-	userRouter := r.Group("/user")
+	userRouter := api.Group("/user")
 	{
 		userRouter.POST("/login", userHandler.Login)
 		userRouter.POST("/register", userHandler.Register)
 	}
 
-	userInfoRouter := r.Group("/userInfo", middleware.JwtAuth())
+	userInfoRouter := api.Group("/userInfo", middleware.JwtAuth())
 	{
 		userInfoRouter.GET("/user", userInfoHandler.GetUserInfo)
 	}
 
 	// 景点相关接口
-	siteRouter := r.Group("/site", middleware.JwtAuth())
+	siteRouter := api.Group("/site", middleware.JwtAuth())
 	{
 		siteRouter.POST("/query/list", siteHandler.SitePageQuery)
 		siteRouter.GET("/query/:siteIndex", siteHandler.SiteQueryByIndex)
@@ -37,7 +39,7 @@ func InitRouter(r *gin.Engine) {
 	}
 
 	// 评论相关接口
-	commentRouter := r.Group("/comment", middleware.JwtAuth())
+	commentRouter := api.Group("/comment", middleware.JwtAuth())
 	{
 		commentRouter.POST("/positive/:siteIndex", commentHandler.QueryPositiveCommentByPage)
 		commentRouter.POST("/negative/:siteIndex", commentHandler.QueryNegativeCommentByPage)
@@ -46,7 +48,7 @@ func InitRouter(r *gin.Engine) {
 	}
 
 	// 点赞相关接口
-	likeRouter := r.Group("/like", middleware.JwtAuth())
+	likeRouter := api.Group("/like", middleware.JwtAuth())
 	{
 		likeRouter.GET("/like/:siteIndex", likeHandler.Like)
 		likeRouter.GET("/cancel/:siteIndex", likeHandler.CancelLike)
@@ -56,7 +58,7 @@ func InitRouter(r *gin.Engine) {
 	}
 
 	// 浏览记录相关接口
-	viewRouter := r.Group("/view", middleware.JwtAuth())
+	viewRouter := api.Group("/view", middleware.JwtAuth())
 	{
 		viewRouter.GET("/view/:siteIndex", viewHandler.View)
 		viewRouter.GET("/siteList", viewHandler.GetVisitedSiteList)
@@ -64,7 +66,7 @@ func InitRouter(r *gin.Engine) {
 	}
 
 	// 测试接口
-	testRouter := r.Group("/test", middleware.JwtAuth())
+	testRouter := api.Group("/test", middleware.JwtAuth())
 	{
 		// 测试 jwt 
 		testRouter.GET("/jwt", func(c *gin.Context) {
