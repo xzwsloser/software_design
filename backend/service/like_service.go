@@ -22,16 +22,16 @@ var (
 )
 
 func (*LikeService) Like(userId int, siteIndex int) error {
-	isLiked, err := likeCacheService.QuerySiteIsLikedByUser(userId, siteIndex)
+	_, err := likeCacheService.QuerySiteIsLikedByUser(userId, siteIndex)
 	if err != nil {
 		utils.GetLogger().Error("Failed to query site is liked by user")
 		return err
 	}
 
-	if isLiked {
-		utils.GetLogger().Error("The Site is Liked By User")
-		return SITE_LIKED_ERROR
-	}
+	// if isLiked {
+	// 	utils.GetLogger().Error("The Site is Liked By User")
+	// 	return SITE_LIKED_ERROR
+	// }
 
 	// 先写 mysql
 	l := &model.Like{}
