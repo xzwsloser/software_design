@@ -89,15 +89,15 @@ func (*LikeService) CancelLike(userId int, siteIndex int) error {
 }
 
 func (*LikeService) QueryLikeOfUser(userId int) ([]int, error) {
-	result, err := likeCacheService.QueryLikeOfUser(userId)
-	if err != nil {
-		utils.GetLogger().Error(err.Error())
-		return nil, err
-	}
+	// result, err := likeCacheService.QueryLikeOfUser(userId)
+	// if err != nil {
+	// 	utils.GetLogger().Error(err.Error())
+	// 	return nil, err
+	// }
 
-	if len(result) != 0 {
-		return result, nil
-	}
+	// if len(result) != 0 {
+	// 	return result, nil
+	// }
 
 	// 查询 mysql
 	like := &model.Like{}
@@ -108,7 +108,7 @@ func (*LikeService) QueryLikeOfUser(userId int) ([]int, error) {
 		return nil, err
 	}
 
-	result = make([]int, 0, len(likeLists))
+	result := make([]int, 0, len(likeLists))
 	for _, relation := range likeLists {
 		result = append(result, relation.SiteIndex)
 	}
@@ -117,15 +117,15 @@ func (*LikeService) QueryLikeOfUser(userId int) ([]int, error) {
 }
 
 func (*LikeService) QueryLikeOfSite(siteIndex int) ([]int, error) {
-	result, err := likeCacheService.QueryLikeOfSite(siteIndex)
-	if err != nil {
-		utils.GetLogger().Error(err.Error())
-		return nil, err
-	}
+	// result, err := likeCacheService.QueryLikeOfSite(siteIndex)
+	// if err != nil {
+	// 	utils.GetLogger().Error(err.Error())
+	// 	return nil, err
+	// }
 
-	if len(result) != 0 {
-		return result, nil
-	}
+	// if len(result) != 0 {
+	// 	return result, nil
+	// }
 
 	// 查询 mysql
 	like := &model.Like{}
@@ -136,7 +136,7 @@ func (*LikeService) QueryLikeOfSite(siteIndex int) ([]int, error) {
 		return nil, err
 	}
 
-	result = make([]int, 0, len(likeLists))
+	result := make([]int, 0, len(likeLists))
 	for _, relation := range likeLists {
 		result = append(result, 0, relation.UserId)
 	}
@@ -145,13 +145,13 @@ func (*LikeService) QueryLikeOfSite(siteIndex int) ([]int, error) {
 }
 
 func (*LikeService) QueryIsLikedByUser(userId int, siteIndex int) (bool , error) {
-	result, err := likeCacheService.QuerySiteIsLikedByUser(userId, siteIndex)
-	if err != nil {
-		utils.GetLogger().Error(err.Error())
-		return false, err
-	}
+	// result, err := likeCacheService.QuerySiteIsLikedByUser(userId, siteIndex)
+	// if err != nil {
+	// 	utils.GetLogger().Error(err.Error())
+	// 	return false, err
+	// }
 
-	if result { return result, nil }
+	// if result { return result, nil }
 
 	like := &model.Like{}
 	like.UserId = userId

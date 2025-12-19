@@ -62,15 +62,15 @@ func (*ViewService) View(userId int, siteIndex int) (bool, error) {
 
 // @Description: 查询某一个用户的景点浏览列表
 func (*ViewService) QueryVisitedSiteList(userId int) ([]int, error) {
-	visitedSiteList, err := viewCacheService.QueryViewOfUser(userId)
-	if err != nil {
-		utils.GetLogger().Error(err.Error())
-		return nil, err
-	}
+	// visitedSiteList, err := viewCacheService.QueryViewOfUser(userId)
+	// if err != nil {
+	// 	utils.GetLogger().Error(err.Error())
+	// 	return nil, err
+	// }
 
-	if len(visitedSiteList) != 0 {
-		return visitedSiteList, nil
-	}
+	// if len(visitedSiteList) != 0 {
+	// 	return visitedSiteList, nil
+	// }
 
 	view := &model.View{}
 	view.UserId = userId
@@ -80,7 +80,7 @@ func (*ViewService) QueryVisitedSiteList(userId int) ([]int, error) {
 		return nil, err
 	}
 
-	visitedSiteList = make([]int, 0, len(viewList))
+	visitedSiteList := make([]int, 0, len(viewList))
 	for _, cur_view := range viewList {
 		visitedSiteList = append(visitedSiteList, cur_view.SiteIndex)
 	}
@@ -90,15 +90,15 @@ func (*ViewService) QueryVisitedSiteList(userId int) ([]int, error) {
 
 // @Description: 查询浏览过某一个景点的用户列表
 func (*ViewService) QueryUserListed(siteIndex int) ([]int, error) {
-	userList, err := viewCacheService.QueryViewOfSite(siteIndex)
-	if err != nil {
-		utils.GetLogger().Error(err.Error())
-		return nil, err
-	}
+	// userList, err := viewCacheService.QueryViewOfSite(siteIndex)
+	// if err != nil {
+	// 	utils.GetLogger().Error(err.Error())
+	// 	return nil, err
+	// }
 
-	if len(userList) != 0 {
-		return userList, nil
-	}
+	// if len(userList) != 0 {
+	// 	return userList, nil
+	// }
 
 	view := &model.View{}
 	view.SiteIndex = siteIndex
@@ -108,7 +108,7 @@ func (*ViewService) QueryUserListed(siteIndex int) ([]int, error) {
 		return nil, err
 	}
 
-	userList = make([]int, 0, len(userList))
+	userList := make([]int, 0, len(viewList))
 	for _, cur_view := range viewList {
 		userList = append(userList, cur_view.UserId)
 	}
