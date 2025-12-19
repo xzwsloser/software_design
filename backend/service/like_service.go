@@ -95,6 +95,24 @@ func (*LikeService) QueryLikeOfUser(userId int) ([]int, error) {
 		return nil, err
 	}
 
+	if len(result) != 0 {
+		return result, nil
+	}
+
+	// 查询 mysql
+	like := &model.Like{}
+	like.UserId = userId
+	likeLists, err := like.QueryLikeList()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return nil, err
+	}
+
+	result = make([]int, 0, len(likeLists))
+	for _, relation := range likeLists {
+		result = append(result, relation.SiteIndex)
+	}
+
 	return result, nil
 }
 
@@ -103,6 +121,24 @@ func (*LikeService) QueryLikeOfSite(siteIndex int) ([]int, error) {
 	if err != nil {
 		utils.GetLogger().Error(err.Error())
 		return nil, err
+	}
+
+	if len(result) != 0 {
+		return result, nil
+	}
+
+	// 查询 mysql
+	like := &model.Like{}
+	like.SiteIndex = siteIndex
+	likeLists, err := like.QueryLikeUserList()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return nil, err
+	}
+
+	result = make([]int, 0, len(likeLists))
+	for _, relation := range likeLists {
+		result = append(result, 0, relation.UserId)
 	}
 
 	return result, nil
@@ -115,6 +151,22 @@ func (*LikeService) QueryIsLikedByUser(userId int, siteIndex int) (bool , error)
 		return false, err
 	}
 
-	return result, nil
+	if result { return result, nil }
+
+	like := &model.Like{}
+	like.UserId = userId
+	like.SiteIndex = siteIndex
+	r, err := like.QueryConnection()
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return false, nil
+		}
+
+		utils.GetLogger().Error(err.Error())
+		return false, err
+	}
+
+
+	return r.Valid == 1, nil
 }
 

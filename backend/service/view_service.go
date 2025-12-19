@@ -1,6 +1,9 @@
 package service
 
 import (
+	"errors"
+
+	"github.com/jinzhu/gorm"
 	"github.com/xzwsloser/software_design/backend/cache"
 	"github.com/xzwsloser/software_design/backend/model"
 	"github.com/xzwsloser/software_design/backend/utils"
@@ -30,6 +33,17 @@ func (*ViewService) View(userId int, siteIndex int) (bool, error) {
 	v := &model.View{}
 	v.UserId = userId
 	v.SiteIndex = siteIndex
+	_, err = v.QueryViewConnection()
+
+	if err == nil {
+		return false, nil
+	} else {
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
+			utils.GetLogger().Error(err.Error())
+			return false, err
+		}
+	}
+
 	err = v.CreateViewRecord()
 	if err != nil {
 		utils.GetLogger().Error(err.Error())
@@ -54,6 +68,23 @@ func (*ViewService) QueryVisitedSiteList(userId int) ([]int, error) {
 		return nil, err
 	}
 
+	if len(visitedSiteList) != 0 {
+		return visitedSiteList, nil
+	}
+
+	view := &model.View{}
+	view.UserId = userId
+	viewList, err := view.QueryViewList()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return nil, err
+	}
+
+	visitedSiteList = make([]int, 0, len(viewList))
+	for _, cur_view := range viewList {
+		visitedSiteList = append(visitedSiteList, cur_view.SiteIndex)
+	}
+
 	return visitedSiteList, nil
 }
 
@@ -65,5 +96,23 @@ func (*ViewService) QueryUserListed(siteIndex int) ([]int, error) {
 		return nil, err
 	}
 
+	if len(userList) != 0 {
+		return userList, nil
+	}
+
+	view := &model.View{}
+	view.SiteIndex = siteIndex
+	viewList, err := view.QueryViewUserList()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return nil, err
+	}
+
+	userList = make([]int, 0, len(userList))
+	for _, cur_view := range viewList {
+		userList = append(userList, cur_view.UserId)
+	}
+
 	return userList, nil
 }
+

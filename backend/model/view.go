@@ -15,4 +15,25 @@ func (v *View) CreateViewRecord() error {
 	return err
 }
 
+func (v *View) QueryViewConnection() (View, error) {
+	var result View
+	err := GetMySqlClient().Table(v.TableName()).Where("user_id = ? and site_idx = ?",  v.UserId, v.SiteIndex).First(&result).Error
+	return result, err
+}
+
+func (v *View) QueryViewList() ([]View, error) {
+	var views []View
+	err := GetMySqlClient().Table(v.TableName()).Where("user_id = ?", v.UserId).Find(&views).Error
+	return views, err
+}
+
+func (v *View) QueryViewUserList() ([]View, error) {
+	var views []View
+	err := GetMySqlClient().Table(v.TableName()).Where("site_idx = ?", v.SiteIndex).Find(&views).Error
+	return views, err
+}
+
+
+
+
 

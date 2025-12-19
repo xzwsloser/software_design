@@ -28,3 +28,14 @@ func (l *Like) QueryConnection() (Like, error) {
 	return r, err
 }
 
+func (l *Like) QueryLikeList() ([]Like, error) {
+	var likes []Like
+	err := GetMySqlClient().Table(l.TableName()).Where("user_id = ? and valid = 1", l.UserId).Find(&likes).Error
+	return likes, err
+}
+
+func (l *Like) QueryLikeUserList() ([]Like, error) {
+	var likes []Like
+	err := GetMySqlClient().Table(l.TableName()).Where("site_idx = ? and valid = 1", l.SiteIndex).Find(&likes).Error
+	return likes, err
+}
