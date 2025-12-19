@@ -19,16 +19,16 @@ var (
 
 // @Description: 记录景点浏览记录(返回值 -> 是否插入成功)
 func (*ViewService) View(userId int, siteIndex int) (bool, error) {
-	isVisited, err := viewCacheService.QueryIsViewByUser(userId, siteIndex)
+	_, err := viewCacheService.QueryIsViewByUser(userId, siteIndex)
 	if err != nil {
 		utils.GetLogger().Error(err.Error())
 		return false, err
 	}
 
-	if (isVisited) {
-		utils.GetLogger().Debugf("User: %d has visited the Site %d", userId, siteIndex)	
-		return false, nil
-	}
+	// if (isVisited) {
+	// 	utils.GetLogger().Debugf("User: %d has visited the Site %d", userId, siteIndex)	
+	// 	return false, nil
+	// }
 
 	v := &model.View{}
 	v.UserId = userId
