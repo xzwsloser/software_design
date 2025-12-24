@@ -1,4 +1,5 @@
 from pymilvus import MilvusClient
+from pymilvus.orm import collection
 from sklearn.metrics import silhouette_samples
 from rec_model import SiteTower, TwoTower, UserTower
 import pandas as pd
@@ -28,13 +29,19 @@ class VectorStore:
             data=[user_embed],
             limit=query_size,
             output_fields=["site_idx"],
-            search_params={"metric_type": "IP"}
+            search_params={"metric_type": "COSINE"}
         )
 
         site_idxs = [ record['entity']['site_idx'] for record in res[0] ]
         scores = [ record['distance'] for record in res[0] ]
 
         return site_idxs, scores
+    def delte_useless_sites(self):
+        del_str = 'site_idx in [780,668,926,288,673,553,300,688,944,954,826,447,196,199,711,968,978,469,221,989,607,992,480,491,366,751,623,880,628,757,636]'
+        self.client.delete(
+            collection_name="tb_site_embed",
+            filter=del_str
+        )
 
 def store_site_embed():
     site_df = pd.read_pickle("../../dataset/site_features.pkl")
@@ -126,7 +133,7 @@ def recommand_for_current_user(model: TwoTower):
     with torch.no_grad():
         user_embed = user_embed.detach().cpu().numpy().reshape(-1)
 
-    related_site_idxs, scores = client.search_site_embed(user_embed, query_size=20)
+    related_site_idxs, scores = client.search_site_embed(user_embed, query_size=50)
     
     print('='*10 + 'vector store search result' + '='*10)
     for idx, (site_idx, score) in enumerate(zip(related_site_idxs, scores)):

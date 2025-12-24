@@ -111,6 +111,21 @@ class RecDataset(Dataset):
 
         return sample
 
+class AttentionPooling(nn.Module):
+    def __init__(self, embed_dim=32):
+        super(AttentionPooling, self).__init__()
+        self.attention_layer = nn.Sequential(
+            nn.Linear(embed_dim, embed_dim//2),
+            nn.ReLU(),
+            nn.Linear(embed_dim//2, 1)
+        )
+    def forward(self, x):
+        # x: [B, L, embed_dim] => [B, L, 1] => [B, L]
+        attention_weights = F.softmax(self.attention_layer(x), dim=1)
+
+        # 考虑每一个标签的权重
+        return (x * attention_weights).sum(dim=1) # [B, embed_dim]
+
 class UserTower(nn.Module):
     def __init__(self,
                  address_dim=35,
@@ -141,7 +156,11 @@ class UserTower(nn.Module):
             nn.Dropout(dropout_rate),
             nn.Linear(hidden_dim, out_dim)
         )
-    
+
+        self.like_type_pooling = AttentionPooling(embed_dim=embed_dim)
+        self.targets_pooling = AttentionPooling(embed_dim=embed_dim)
+        self.attention_pooling = AttentionPooling(embed_dim=embed_dim)
+
     def _pool(self, matrix, embed):
         # matrix: [B, L]
         matrix_embed = embed(matrix)
@@ -157,9 +176,13 @@ class UserTower(nn.Module):
         price_sensitive_embed = self.price_sensitive_embedding(batch["price_sensitive"])
 
         # 多值稀疏特征 [B, L, embed_dim] -> [B, embed_dim]
-        like_type_embed = self._pool(batch["like_type"], self.like_type_embedding)
-        targets_embed = self._pool(batch["targets"], self.targets_embedding)
-        attention_embed = self._pool(batch["attention"], self.attention_embedding)
+        # like_type_embed = self._pool(batch["like_type"], self.like_type_embedding)
+        # targets_embed = self._pool(batch["targets"], self.targets_embedding)
+        # attention_embed = self._pool(batch["attention"], self.attention_embedding)
+
+        like_type_embed = self.like_type_pooling(self.like_type_embedding(batch["like_type"]))
+        targets_embed = self.targets_pooling(self.targets_embedding(batch["targets"]))
+        attention_embed = self.attention_pooling(self.attention_embedding(batch["attention"]))
 
         # 特征拼接
         features = torch.cat(
@@ -181,7 +204,8 @@ class SiteTower(nn.Module):
                  embed_dim=32,
                  output_dim=64,
                  hidden_dim=128,
-                 introduce_final_dim=64,
+                 introduce_final_dim=32,
+                 dense_final_dim=32,
                  dropout_rate=0.1):
 
         super(SiteTower, self).__init__()
@@ -189,13 +213,13 @@ class SiteTower(nn.Module):
         # 地址特征嵌入层
         self.address_embedding = nn.Embedding(address_dim, embed_dim)
 
-        input_dim = embed_dim + introduce_final_dim + 4
-
+        input_dim = embed_dim + introduce_final_dim + dense_final_dim
 
         self.introduce_proj = nn.Sequential(
-            nn.Linear(introduce_dim, introduce_final_dim),  # 256→64，平衡维度占比
+            nn.Linear(introduce_dim, introduce_dim//2),  # 256→64，平衡维度占比
             nn.ReLU(),
-            nn.Dropout(dropout_rate)
+            nn.Dropout(dropout_rate),
+            nn.Linear(introduce_dim//2, introduce_final_dim)
         )
 
         # self.register_buffer("address_features", address_features)
@@ -209,6 +233,13 @@ class SiteTower(nn.Module):
             nn.ReLU(),
             nn.Dropout(dropout_rate),
             nn.Linear(hidden_dim, output_dim)
+        )
+
+        self.dense_layer = nn.Sequential(
+            nn.Linear(4, 16),
+            nn.ReLU(),
+            nn.Dropout(dropout_rate),
+            nn.Linear(16, dense_final_dim)
         )
 
     def forward(self, batch):
@@ -226,11 +257,12 @@ class SiteTower(nn.Module):
 
         address_embed = self.address_embedding(address)
         intro_embed = self.introduce_proj(intro_embed)
+        other_embed = self.dense_layer(other)
 
         site_features = torch.cat([
                 address_embed, 
                 intro_embed, 
-                other
+                other_embed
                 ], dim=-1)
 
         site_embed = self.mlp(site_features)
