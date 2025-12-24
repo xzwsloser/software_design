@@ -16,6 +16,10 @@
             <el-icon><View /></el-icon>
             <span>我的足迹</span>
           </router-link>
+          <router-link to="/data-visualization" class="nav-item">
+            <el-icon><DataAnalysis /></el-icon>
+            <span>数据可视化</span>
+          </router-link>
           <router-link to="/user-info" class="nav-item active">
             <el-icon><User /></el-icon>
             <span>我的信息</span>
@@ -104,7 +108,7 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserInfoStore } from '../stores/userInfo'
 import { ElMessage } from 'element-plus'
-import { List, Star, View, User, InfoFilled } from '@element-plus/icons-vue'
+import { List, Star, View, User, InfoFilled, DataAnalysis } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()

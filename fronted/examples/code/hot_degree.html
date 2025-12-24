@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>中国省份景点分布热力图</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+  <style>
+    body{margin:0;padding:20px;background:#f0f2f5;font-family:"Microsoft YaHei",sans-serif}
+    .container{max-width:1200px;margin:0 auto}
+    h1{text-align:center;color:#333;margin-bottom:30px}
+    .chart-container{width:100%;height:700px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.1);padding:15px;box-sizing:border-box}
+    .info-panel{margin-top:20px;padding:15px;background:#fff;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,.1)}
+    .info-panel h3{margin-top:0;color:#1890ff}
+    .top-provinces{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px}
+    .province-tag{background:#e6f4ff;color:#1890ff;padding:5px 10px;border-radius:15px;font-size:14px;display:flex;align-items:center}
+    .province-tag span{font-weight:700;margin-left:5px}
+    .error-message{background:#fff8e6;color:#ff9800;padding:10px;border-radius:4px;margin-top:10px;display:none}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>中国各省份景点数量分布热力图</h1>
+    <div class="chart-container" id="heatmap"></div>
+    <div class="info-panel">
+      <h3>数据概览</h3>
+      <p>共有 <strong>34</strong> 个省份/直辖市数据，总景点数量：<strong>987</strong> 个</p>
+      <p>景点数量前三的省份：</p>
+      <div class="top-provinces">
+        <div class="province-tag">云南 <span>72</span></div>
+        <div class="province-tag">四川 <span>61</span></div>
+        <div class="province-tag">江苏 <span>52</span></div>
+      </div>
+      <div class="error-message" id="dataError">注意：部分地区数据未找到或匹配失败，请检查控制台获取详细信息。</div>
+    </div>
+  </div>
+
+  <script>
+    const chart = echarts.init(document.getElementById('heatmap'));
+
+    // 更新为最新的全量统计数据（简称）
+    const rawData = [
+      { name: '云南', value: 72 },
+      { name: '四川', value: 61 },
+      { name: '江苏', value: 52 },
+      { name: '浙江', value: 51 },
+      { name: '山东', value: 51 },
+      { name: '广西', value: 47 },
+      { name: '福建', value: 39 },
+      { name: '山西', value: 38 },
+      { name: '海南', value: 38 },
+      { name: '陕西', value: 38 },
+      { name: '河南', value: 37 },
+      { name: '北京', value: 36 },
+      { name: '湖南', value: 34 },
+      { name: '新疆', value: 30 },
+      { name: '广东', value: 29 },
+      { name: '上海', value: 28 },
+      { name: '湖北', value: 28 },
+      { name: '重庆', value: 26 },
+      { name: '江西', value: 25 },
+      { name: '贵州', value: 25 },
+      { name: '内蒙古', value: 25 },
+      { name: '黑龙江', value: 21 },
+      { name: '甘肃', value: 21 },
+      { name: '河北', value: 19 },
+      { name: '辽宁', value: 17 },
+      { name: '安徽', value: 17 },
+      { name: '香港', value: 16 },
+      { name: '西藏', value: 11 },
+      { name: '青海', value: 10 },
+      { name: '澳门', value: 10 },
+      { name: '吉林', value: 9 },
+      { name: '天津', value: 7 },
+      { name: '宁夏', value: 7 }
+    ];
+
+    // 常见简称 -> geojson 标准名（维持不变）
+    const toGeoName = {
+      '北京': '北京市',
+      '天津': '天津市',
+      '上海': '上海市',
+      '重庆': '重庆市',
+
+      '河北': '河北省',
+      '山西': '山西省',
+      '辽宁': '辽宁省',
+      '吉林': '吉林省',
+      '黑龙江': '黑龙江省',
+      '江苏': '江苏省',
+      '浙江': '浙江省',
+      '安徽': '安徽省',
+      '福建': '福建省',
+      '江西': '江西省',
+      '山东': '山东省',
+      '河南': '河南省',
+      '湖北': '湖北省',
+      '湖南': '湖南省',
+      '广东': '广东省',
+      '海南': '海南省',
+      '四川': '四川省',
+      '贵州': '贵州省',
+      '云南': '云南省',
+      '陕西': '陕西省',
+      '甘肃': '甘肃省',
+      '青海': '青海省',
+
+      '内蒙古': '内蒙古自治区',
+      '广西': '广西壮族自治区',
+      '西藏': '西藏自治区',
+      '宁夏': '宁夏回族自治区',
+      '新疆': '新疆维吾尔自治区',
+
+      '香港': '香港特别行政区',
+      '澳门': '澳门特别行政区'
+    };
+
+    // 转换后的数据（用标准名称喂给 series.data，避免 NaN）
+    const data = rawData.map(d => ({
+      name: toGeoName[d.name] || d.name,
+      value: d.value
+    }));
+
+    const option = {
+      backgroundColor: '#fff',
+      tooltip: {
+        trigger: 'item',
+        formatter: (params) => {
+          const value = (params.value === undefined || params.value === null || Number.isNaN(params.value))
+            ? '数据未提供'
+            : params.value;
+          return `<div style="padding:5px;">
+            <strong>${params.name}</strong><br>
+            景点数量: <span style="color:#e63946; font-size:16px;">${value}</span>个
+          </div>`;
+        }
+      },
+      visualMap: {
+        type: 'continuous',
+        min: 0,
+        max: 75,  // 根据最新数据调整最大值
+        left: 'left',
+        bottom: 'bottom',
+        text: ['高', '低'],
+        calculable: true,
+        inRange: {
+          color: ['#e6f7ff','#bae7ff','#91d5ff','#69c0ff','#40a9ff','#1890ff','#096dd9','#0050b3']
+        },
+        textStyle: { color: '#333' }
+      },
+      series: [{
+        name: '景点数量',
+        type: 'map',
+        map: 'china',
+        roam: true,
+        zoom: 1.2,
+        itemStyle: {
+          areaColor: '#f5f5f5',
+          borderColor: '#999',
+          borderWidth: 0.5
+        },
+        emphasis: {
+          itemStyle: { areaColor: '#ffcc00', borderWidth: 2 },
+          label: { show: true, color: '#000', fontWeight: 'bold' }
+        },
+        label: { show: true, fontSize: 12, color: '#666' },
+        data
+      }]
+    };
+
+    fetch('https://geo.datav.aliyun.com/areas_v3/bound/100000_full.json')
+      .then(r => {
+        if (!r.ok) throw new Error('地图数据加载失败: ' + r.status);
+        return r.json();
+      })
+      .then(chinaJson => {
+        echarts.registerMap('china', chinaJson);
+
+        // 检查是否有名称没匹配到 geojson
+        const regionNames = (chinaJson.features || []).map(f => f.properties && f.properties.name).filter(Boolean);
+        const unmatched = data.filter(item => !regionNames.includes(item.name));
+        if (unmatched.length) {
+          console.warn('以下地区名称未在地图数据中找到匹配:', unmatched);
+          document.getElementById('dataError').style.display = 'block';
+        }
+
+        chart.setOption(option);
+      })
+      .catch(err => {
+        console.error('获取地图数据失败:', err);
+        alert('地图加载失败，请刷新页面重试');
+      });
+
+    window.addEventListener('resize', () => chart.resize());
+  </script>
+</body>
+</html>

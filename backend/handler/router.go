@@ -65,6 +65,12 @@ func InitRouter(r *gin.Engine) {
 		viewRouter.GET("/userList/:siteIndex", viewHandler.GetUserList)
 	}
 
+	// OSS 图片获取接口
+	ossRouter := api.Group("/oss", middleware.JwtAuth())
+	{
+		ossRouter.GET("/touristType", ossHandler.GetTotalTouristTypePic)
+	}
+
 	// 测试接口
 	testRouter := api.Group("/test", middleware.JwtAuth())
 	{

@@ -21,3 +21,6 @@
 [2025-12-24 21:13:25] [31m[error][0m mysql.go:30 github.com/xzwsloser/software_design/backend/model.InitMysqlClient dial tcp [::1]:3306: connect: connection refused 
 [2025-12-24 21:15:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
 [2025-12-24 21:53:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
+[2025-12-24 22:16:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
+[2025-12-24 22:38:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
+[2025-12-24 22:44:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
