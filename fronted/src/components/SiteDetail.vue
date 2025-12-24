@@ -108,6 +108,74 @@
             </div>
           </div>
 
+          <!-- 评论分析图表 -->
+          <div class="info-card charts-section" v-if="hasCharts">
+            <h2 class="card-title">
+              <el-icon><TrendCharts /></el-icon>
+              评论分析
+            </h2>
+
+            <!-- 词云图和饼图网格布局 -->
+            <div class="charts-grid">
+              <!-- 好评词云图 -->
+              <div class="chart-item" v-if="siteDetail.positiveCommentPic">
+                <h3 class="chart-title">
+                  <span class="chart-icon positive-icon">好评</span>
+                  词云图
+                </h3>
+                <div class="chart-image-container">
+                  <img
+                    :src="siteDetail.positiveCommentPic"
+                    alt="好评词云图"
+                    class="chart-image"
+                    @click="previewImage(siteDetail.positiveCommentPic)"
+                  />
+                  <div class="image-overlay">
+                    <el-icon><ZoomIn /></el-icon>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 差评词云图 -->
+              <div class="chart-item" v-if="siteDetail.negativeCommentPic">
+                <h3 class="chart-title">
+                  <span class="chart-icon negative-icon">差评</span>
+                  词云图
+                </h3>
+                <div class="chart-image-container">
+                  <img
+                    :src="siteDetail.negativeCommentPic"
+                    alt="差评词云图"
+                    class="chart-image"
+                    @click="previewImage(siteDetail.negativeCommentPic)"
+                  />
+                  <div class="image-overlay">
+                    <el-icon><ZoomIn /></el-icon>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 出游动机分布饼图 -->
+              <div class="chart-item full-width" v-if="siteDetail.touristTypePiePic">
+                <h3 class="chart-title">
+                  <el-icon><PieChart /></el-icon>
+                  游客出游动机分布
+                </h3>
+                <div class="chart-image-container pie-chart-container">
+                  <img
+                    :src="siteDetail.touristTypePiePic"
+                    alt="出游动机分布图"
+                    class="chart-image pie-image"
+                    @click="previewImage(siteDetail.touristTypePiePic)"
+                  />
+                  <div class="image-overlay">
+                    <el-icon><ZoomIn /></el-icon>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <!-- 游客评价 -->
           <div class="info-card">
             <CommentSection :siteIndex="siteDetail?.siteIndex" />
@@ -160,7 +228,8 @@ import {
   Phone,
   Picture,
   ZoomIn,
-  View
+  View,
+  PieChart
 } from '@element-plus/icons-vue'
 
 const router = useRouter()
@@ -192,25 +261,61 @@ const userInfo = ref({
 // 计算属性
 const imageList = computed(() => {
   if (!siteDetail.value?.images) return []
-  
+
   const images = siteDetail.value.images.split(',').filter(img => img.trim())
-  
+
   // 创建一个Map来存储去重后的图片，key为去除尺寸后的URL
   const uniqueImages = new Map()
-  
+
   images.forEach(img => {
     // 提取基础URL（去除尺寸部分）
     const baseImg = img.replace(/_[WD]_\d+_\d+\.(jpg|jpeg|png|gif)$/i, '')
-    
+
     // 如果是大图(_W_)或者还没有这张图片，则保存
     if (img.includes('_W_') || !uniqueImages.has(baseImg)) {
       uniqueImages.set(baseImg, img)
     }
   })
-  
+
   // 返回去重后的图片数组
   return Array.from(uniqueImages.values())
 })
+
+// 图表加载状态
+const chartsStatus = ref({
+  positiveComment: { valid: true, loading: true },
+  negativeComment: { valid: true, loading: true },
+  touristTypePie: { valid: true, loading: true }
+})
+
+// 判断是否有可视化图表
+const hasCharts = computed(() => {
+  if (!siteDetail.value) return false
+
+  const hasPositive = siteDetail.value.positiveCommentPic && chartsStatus.value.positiveComment.valid
+  const hasNegative = siteDetail.value.negativeCommentPic && chartsStatus.value.negativeComment.valid
+  const hasPie = siteDetail.value.touristTypePiePic && chartsStatus.value.touristTypePie.valid
+
+  return hasPositive || hasNegative || hasPie
+})
+
+// 检查图片是否有效（非XML错误响应）
+const checkImageValidity = (imageUrl, type) => {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      chartsStatus.value[type].loading = false
+      chartsStatus.value[type].valid = true
+      resolve(true)
+    }
+    img.onerror = () => {
+      chartsStatus.value[type].loading = false
+      chartsStatus.value[type].valid = false
+      resolve(false)
+    }
+    img.src = imageUrl
+  })
+}
 
 // 获取景点第一张图片
 const getFirstImage = (images) => {
@@ -264,6 +369,17 @@ const fetchSiteDetail = async (siteIndex) => {
 
       // 记录浏览记录（静默记录，不显示提示）
       await viewStore.recordView(siteIndex)
+
+      // 检查图表图片的有效性
+      if (siteDetail.value.positiveCommentPic) {
+        checkImageValidity(siteDetail.value.positiveCommentPic, 'positiveComment')
+      }
+      if (siteDetail.value.negativeCommentPic) {
+        checkImageValidity(siteDetail.value.negativeCommentPic, 'negativeComment')
+      }
+      if (siteDetail.value.touristTypePiePic) {
+        checkImageValidity(siteDetail.value.touristTypePiePic, 'touristTypePie')
+      }
     } else {
       error.value = data.error || '获取景点详情失败'
     }
@@ -581,6 +697,92 @@ onMounted(() => {
   padding: 3rem;
 }
 
+/* 评论分析图表样式 */
+.charts-section {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.98) 100%);
+}
+
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.chart-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chart-item.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.chart-icon {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.chart-icon.positive-icon {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.chart-icon.negative-icon {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: white;
+}
+
+.chart-title .el-icon {
+  color: #667eea;
+  font-size: 1.3rem;
+}
+
+.chart-image-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f8f9fa;
+  border: 2px solid #e9ecef;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.chart-image-container:hover {
+  border-color: #667eea;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
+  transform: translateY(-2px);
+}
+
+.chart-image {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  background: white;
+}
+
+.pie-chart-container {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.pie-image {
+  max-height: 500px;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .header {
@@ -641,6 +843,32 @@ onMounted(() => {
 
   .image-gallery {
     grid-template-columns: 1fr;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .chart-item {
+    gap: 0.75rem;
+  }
+
+  .chart-title {
+    font-size: 1rem;
+  }
+
+  .chart-icon {
+    padding: 0.2rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .pie-chart-container {
+    max-width: 100%;
+  }
+
+  .pie-image {
+    max-height: 350px;
   }
 }
 </style>

@@ -20,6 +20,13 @@
         "addr": "localhost",
         "port": 6379,
         "db": 0
+    },
+
+    "oss": {
+        "url": "https://rec-sys-1-1332520860.cos.ap-guangzhou.myqcloud.com",
+        "appId": "1332520860",
+        "bucket": "rec-sys-1",
+        "secretId": "AKIDjjgU8aprfHgttnUyEH6i6HTjpjQwHQQD",
+        "secretKey": "f9RVVM0RefS2RfhW8XjiT0KRKzRjqkTz"
     }
 }
-

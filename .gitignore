@@ -1,1 +1,4 @@
 rec-sys/dataset/*
+backend/config.json
+backend/bin/config.json
+

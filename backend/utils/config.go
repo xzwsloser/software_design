@@ -29,11 +29,20 @@ type RedisConfig struct {
 	DB 		int32	`json:"db"`
 }
 
+type OssConfig struct {
+	Url 		string	`json:"url"`
+	AppId 		string	`json:"appId"`
+	Bucket		string	`json:"bucket"`
+	SecretId	string	`json:"secretId"`
+	SecretKey	string	`json:"secretKey"`
+}
+
 var (
 	serverConfig 	*ServerConfig 	= new(ServerConfig)
 	databaseConfig  *DatabaseConfig = new(DatabaseConfig) 
 	jwtConfig 		*JwtConfig 		= new(JwtConfig)
 	redisConfig 	*RedisConfig    = new(RedisConfig)
+	ossConfig       *OssConfig      = new(OssConfig)
 )
 
 func LoadConfig(filePath string) {
@@ -96,6 +105,16 @@ func LoadConfig(filePath string) {
 	if err != nil {
 		panic("Failed to transform to redis config")
 	}
+
+	ossJsonCode, err := json.Marshal(configDict["oss"].(map[string]interface{}))
+	if err != nil {
+		panic("Failed to Fetch oss Config")
+	}
+
+	err = json.Unmarshal(ossJsonCode, ossConfig)
+	if err != nil {
+		panic("Failed to transform to oss Config")
+	}
 }
 
 func GetServerConfig() *ServerConfig {
@@ -112,4 +131,8 @@ func GetJwtConfig() *JwtConfig {
 
 func GetRedisConfig() *RedisConfig {
 	return redisConfig
+}
+
+func GetOssConfig() *OssConfig {
+	return ossConfig
 }

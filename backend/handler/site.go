@@ -57,14 +57,14 @@ func (*SiteHandler) SiteQueryByIndex(c *gin.Context) {
 		return
 	}
 
-	site, err := siteService.QueryByIndex(int32(siteIndex))
+	siteDetailInfo, err := siteService.QueryByIndex(int32(siteIndex))
 	if err != nil {
 		utils.GetLogger().Error(err.Error())
 		c.JSON(http.StatusOK, dto.Fail("cannot find site"))
 		return
 	}
 
-	c.JSON(http.StatusOK, dto.OkWithData(site))
+	c.JSON(http.StatusOK, dto.OkWithData(siteDetailInfo))
 }
 
 // @Description: 根据景点索引列表查询景点信息

@@ -12,6 +12,8 @@ import (
 func main() {
 	utils.LoadConfig("config.json")
 	utils.InitLogger()
+	utils.InitOssClient()
+
 	model.InitMysqlClient()
 	cache.InitRedisClient()
 

@@ -38,11 +38,22 @@ func (*SiteService) QueryByPageParams(pageParams *dto.ScrollRequest) ([]dto.Site
 	return site_infos, nil
 }
 
-func (*SiteService) QueryByIndex(siteIndex int32) (model.Site, error) {
+func (*SiteService) QueryByIndex(siteIndex int32) (dto.SiteDetailInfo, error) {
 	site := &model.Site{}
 	site.SiteIndex = siteIndex
 	cur_site, err := site.QueryByIndex()
-	return cur_site, err
+	positiveCommentUrl := utils.GetPositiveCommentPic(int(siteIndex))
+	negativeCommentUrl := utils.GetNegativeCommentPic(int(siteIndex))
+	touristTypeUrl := utils.GetSiteTouristTypePic(int(siteIndex))
+
+	siteDetailInfo := dto.SiteDetailInfo{
+		Site: cur_site,
+		PositiveCommentWCPic: positiveCommentUrl,
+		NegativeCommentWCPic: negativeCommentUrl,
+		TouristTypePiePic: touristTypeUrl,
+	}
+
+	return siteDetailInfo, err
 }
 
 func (*SiteService) QueryBySiteIndexList(siteIndexList []int) ([]dto.SiteBasicInfo, error) {
