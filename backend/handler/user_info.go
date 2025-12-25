@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/xzwsloser/software_design/backend/dto"
 	"github.com/xzwsloser/software_design/backend/middleware"
+	"github.com/xzwsloser/software_design/backend/model"
 	"github.com/xzwsloser/software_design/backend/utils"
 )
 
@@ -36,6 +37,38 @@ func (*UserInfoHandler) GetUserInfo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, dto.OkWithData(user))
+}
+
+// @Description: 更新用户信息
+// url: /userInfo/update
+// method: POST
+func (*UserInfoHandler) UpdateUserInfo(c *gin.Context) {
+	var u model.User
+	err := c.ShouldBindJSON(&u)
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		c.JSON(http.StatusOK, dto.Fail("Failed to parse request"))
+		return
+	}
+
+	userInfo, err := middleware.GetBasicUserInfo(c)
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		c.JSON(http.StatusOK, dto.Fail("Failed to get user info from jwt token"))
+		return
+	}
+
+	u.Username = userInfo.Username
+
+	err = userService.UpdateUserInfo(&u)
+
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		c.JSON(http.StatusOK, dto.Fail("Failed to update userInfo"))
+		return
+	}
+
+	c.JSON(http.StatusOK, dto.Ok())
 }
 
 

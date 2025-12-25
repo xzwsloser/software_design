@@ -28,6 +28,7 @@ func InitRouter(r *gin.Engine) {
 	userInfoRouter := api.Group("/userInfo", middleware.JwtAuth())
 	{
 		userInfoRouter.GET("/user", userInfoHandler.GetUserInfo)
+		userInfoRouter.POST("/update", userInfoHandler.UpdateUserInfo)
 	}
 
 	// 景点相关接口

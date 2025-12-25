@@ -44,16 +44,17 @@ export const useUserStore = defineStore('user', () => {
 
   const register = async (registerForm) => {
     try {
-      const city = registerForm.province && registerForm.city
-        ? `${registerForm.province}${registerForm.city}`
-        : registerForm.city || ''
-
       const response = await api.post('/user/register', {
         id: 0,
         username: registerForm.username,
         password: registerForm.password,
-        gender: registerForm.gender,
-        city: city
+        gender: Number(registerForm.gender),
+        addressId: Number(registerForm.addressId),
+        touristType: Number(registerForm.touristType),
+        likeType: registerForm.likeType,
+        targets: registerForm.targets,
+        priceSensitive: Number(registerForm.priceSensitive),
+        attention: registerForm.attention
       })
 
       if (response.data.success) {

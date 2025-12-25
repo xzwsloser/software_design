@@ -68,33 +68,174 @@
 
           <!-- 基本信息部分 -->
           <div class="info-section">
-            <h2 class="profile-title">个人信息</h2>
-
-            <div class="info-grid">
-              <div class="info-item">
-                <div class="info-label">用户名</div>
-                <div class="info-value">{{ userInfo.username }}</div>
-              </div>
-
-              <div class="info-item">
-                <div class="info-label">性别</div>
-                <div class="info-value">{{ genderText }}</div>
-              </div>
-
-              <div class="info-item">
-                <div class="info-label">城市</div>
-                <div class="info-value">{{ userInfo.city || '未设置' }}</div>
-              </div>
-
-              <div class="info-item">
-                <div class="info-label">用户ID</div>
-                <div class="info-value">{{ userInfo.id }}</div>
+            <div class="profile-header">
+              <h2 class="profile-title">个人信息</h2>
+              <el-button
+                v-if="!isEditing"
+                type="primary"
+                size="small"
+                @click="startEdit"
+              >
+                <el-icon><Edit /></el-icon>
+                编辑
+              </el-button>
+              <div v-else class="edit-actions">
+                <el-button size="small" @click="cancelEdit">取消</el-button>
+                <el-button type="primary" size="small" @click="saveEdit">保存</el-button>
               </div>
             </div>
 
-            <div class="info-note">
-              <el-icon><InfoFilled /></el-icon>
-              <span>当前为只读模式，用户信息暂不支持修改</span>
+            <!-- 只读模式 -->
+            <div v-if="!isEditing" class="info-display">
+              <div class="info-grid">
+                <div class="info-item">
+                  <div class="info-label">用户名</div>
+                  <div class="info-value">{{ userInfo?.username || '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">用户ID</div>
+                  <div class="info-value">{{ userInfo?.id || '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">性别</div>
+                  <div class="info-value">{{ genderText || '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">所在省份</div>
+                  <div class="info-value">{{ provinceText ? provinceText : '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">出游类型</div>
+                  <div class="info-value">{{ touristTypeText ? touristTypeText : '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">喜欢的景点类型</div>
+                  <div class="info-value">{{ likeTypeText ? likeTypeText : '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">出游动机</div>
+                  <div class="info-value">{{ targetsText ? targetsText : '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">价格敏感度</div>
+                  <div class="info-value">{{ priceSensitiveText ? priceSensitiveText : '-' }}</div>
+                </div>
+
+                <div class="info-item">
+                  <div class="info-label">体验关注点</div>
+                  <div class="info-value">{{ attentionText ? attentionText : '-' }}</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 编辑模式 -->
+            <div v-else class="info-edit">
+              <el-form :model="editForm" label-width="100px" class="edit-form">
+                <div class="readonly-info">
+                  <div class="readonly-item">
+                    <span class="readonly-label">用户名：</span>
+                    <span class="readonly-value">{{ userInfo?.username || '-' }}</span>
+                  </div>
+                  <div class="readonly-item">
+                    <span class="readonly-label">用户ID：</span>
+                    <span class="readonly-value">{{ userInfo?.id || '-' }}</span>
+                  </div>
+                  <div class="readonly-item">
+                    <span class="readonly-label">性别：</span>
+                    <span class="readonly-value">{{ genderText || '-' }}</span>
+                  </div>
+                </div>
+
+                <el-form-item label="所在省份">
+                  <el-select v-model="editForm.addressId" placeholder="请选择省份" style="width: 100%">
+                    <el-option
+                      v-for="(name, id) in dictionaries.provinceDict"
+                      :key="id"
+                      :label="name"
+                      :value="id"
+                    />
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="出游类型">
+                  <el-select v-model="editForm.touristType" placeholder="请选择出游类型" style="width: 100%">
+                    <el-option
+                      v-for="(name, id) in dictionaries.touristTypeDict"
+                      :key="id"
+                      :label="name"
+                      :value="id"
+                    />
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="喜欢的景点类型">
+                  <el-select
+                    v-model="selectedLikeTypes"
+                    placeholder="请选择喜欢的景点类型(最多6项)"
+                    style="width: 100%"
+                    multiple
+                    collapse-tags
+                    collapse-tags-tooltip
+                  >
+                    <el-option
+                      v-for="(name, id) in dictionaries.likeTypeDict"
+                      :key="id"
+                      :label="name"
+                      :value="id"
+                    />
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="出游动机">
+                  <el-select
+                    v-model="selectedTargets"
+                    placeholder="请选择出游动机(最多6项)"
+                    style="width: 100%"
+                    multiple
+                    collapse-tags
+                    collapse-tags-tooltip
+                  >
+                    <el-option
+                      v-for="(name, id) in dictionaries.targetsDict"
+                      :key="id"
+                      :label="name"
+                      :value="id"
+                    />
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="价格敏感度">
+                  <el-select v-model="editForm.priceSensitive" placeholder="请选择价格敏感度" style="width: 100%">
+                    <el-option label="价格敏感型" :value="0" />
+                    <el-option label="价格不敏感" :value="1" />
+                  </el-select>
+                </el-form-item>
+
+                <el-form-item label="体验关注点">
+                  <el-select
+                    v-model="selectedAttentions"
+                    placeholder="请选择体验关注点(最多4项)"
+                    style="width: 100%"
+                    multiple
+                    collapse-tags
+                    collapse-tags-tooltip
+                  >
+                    <el-option
+                      v-for="(name, id) in dictionaries.attentionDict"
+                      :key="id"
+                      :label="name"
+                      :value="id"
+                    />
+                  </el-select>
+                </el-form-item>
+              </el-form>
             </div>
           </div>
         </div>
@@ -104,31 +245,136 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { storeToRefs } from 'pinia'
 import { useUserInfoStore } from '../stores/userInfo'
 import { ElMessage } from 'element-plus'
-import { List, Star, View, User, InfoFilled, DataAnalysis } from '@element-plus/icons-vue'
+import { List, Star, View, User, Edit, DataAnalysis } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()
 
-// 从store获取响应式数据
-const userInfo = computed(() => userInfoStore.userInfo)
-const loading = computed(() => userInfoStore.loading)
-const error = computed(() => userInfoStore.error)
-const genderText = computed(() => userInfoStore.genderText)
+// 使用 storeToRefs 获取响应式数据
+const {
+  userInfo,
+  loading,
+  error,
+  genderText,
+  provinceText,
+  touristTypeText,
+  likeTypeText,
+  targetsText,
+  priceSensitiveText,
+  attentionText
+} = storeToRefs(userInfoStore)
+
+// 获取字典数据（不是响应式的，直接调用即可）
+const dictionaries = computed(() => userInfoStore.getDictionaries())
 
 // 基础用户信息（从localStorage获取）
 const basicUserInfo = ref({
   username: localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).username : '游客'
 })
 
+// 编辑状态
+const isEditing = ref(false)
+
+// 编辑表单
+const editForm = reactive({
+  addressId: '',
+  touristType: '',
+  likeType: '',
+  targets: '',
+  priceSensitive: '',
+  attention: ''
+})
+
+// 多选项的选中值
+const selectedLikeTypes = ref([])
+const selectedTargets = ref([])
+const selectedAttentions = ref([])
+
 // 获取用户详细信息
 const fetchUserInfo = async () => {
   const result = await userInfoStore.fetchUserInfo()
   if (result.success) {
     ElMessage.success('用户信息加载成功')
+  }
+}
+
+// 开始编辑
+const startEdit = () => {
+  // 确保转换为数字类型
+  editForm.addressId = Number(userInfo.value.addressId)
+  editForm.touristType = Number(userInfo.value.touristType)
+  editForm.priceSensitive = Number(userInfo.value.priceSensitive)
+
+  // 解析多选字段（保持数字类型以确保与字典key匹配）
+  selectedLikeTypes.value = userInfo.value.likeType
+    ? userInfo.value.likeType.split(',').map(id => Number(id.trim())).filter(id => !isNaN(id))
+    : []
+
+  selectedTargets.value = userInfo.value.targets
+    ? userInfo.value.targets.split(',').map(id => Number(id.trim())).filter(id => !isNaN(id))
+    : []
+
+  selectedAttentions.value = userInfo.value.attention
+    ? userInfo.value.attention.split(',').map(id => Number(id.trim())).filter(id => !isNaN(id))
+    : []
+
+  isEditing.value = true
+}
+
+// 取消编辑
+const cancelEdit = () => {
+  isEditing.value = false
+}
+
+// 保存编辑
+const saveEdit = async () => {
+  // 验证
+  if (selectedLikeTypes.value.length === 0) {
+    ElMessage.error('请选择喜欢的景点类型')
+    return
+  }
+
+  if (selectedLikeTypes.value.length > 6) {
+    ElMessage.error('喜欢的景点类型最多选择6项')
+    return
+  }
+
+  if (selectedTargets.value.length === 0) {
+    ElMessage.error('请选择出游动机')
+    return
+  }
+
+  if (selectedTargets.value.length > 6) {
+    ElMessage.error('出游动机最多选择6项')
+    return
+  }
+
+  if (selectedAttentions.value.length === 0) {
+    ElMessage.error('请选择体验关注点')
+    return
+  }
+
+  if (selectedAttentions.value.length > 4) {
+    ElMessage.error('体验关注点最多选择4项')
+    return
+  }
+
+  // 将多选项转换为逗号分隔的字符串
+  editForm.likeType = selectedLikeTypes.value.sort((a, b) => a - b).join(',')
+  editForm.targets = selectedTargets.value.sort((a, b) => a - b).join(',')
+  editForm.attention = selectedAttentions.value.sort((a, b) => a - b).join(',')
+
+  const result = await userInfoStore.updateUserInfo(editForm)
+  if (result.success) {
+    ElMessage.success('用户信息更新成功')
+    isEditing.value = false
+  } else {
+    ElMessage.error(result.error || '用户信息更新失败')
   }
 }
 
@@ -228,7 +474,7 @@ onMounted(() => {
 
 .main-content {
   padding: 2rem;
-  max-width: 800px;
+  max-width: 900px;
   margin: 0 auto;
 }
 
@@ -255,7 +501,6 @@ onMounted(() => {
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
   width: 100%;
-  max-width: 500px;
 }
 
 .avatar-section {
@@ -285,18 +530,34 @@ onMounted(() => {
   padding: 2.5rem 2rem;
 }
 
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
 .profile-title {
   font-size: 1.5rem;
   font-weight: 600;
   color: #333;
-  margin-bottom: 2rem;
-  text-align: center;
+  margin: 0;
+}
+
+.edit-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* 只读模式样式 */
+.info-display {
+  width: 100%;
 }
 
 .info-grid {
   display: grid;
+  grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
-  margin-bottom: 2rem;
 }
 
 .info-item {
@@ -312,30 +573,53 @@ onMounted(() => {
 }
 
 .info-value {
-  font-size: 1.1rem;
+  font-size: 1rem;
   color: #333;
-  font-weight: 600;
+  font-weight: 500;
   padding: 0.75rem 1rem;
   background: rgba(102, 126, 234, 0.05);
   border-radius: 8px;
   border: 1px solid rgba(102, 126, 234, 0.1);
+  line-height: 1.5;
+  word-break: break-word;
 }
 
-.info-note {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+/* 编辑模式样式 */
+.info-edit {
+  width: 100%;
+}
+
+.readonly-info {
   padding: 1rem;
-  background: rgba(230, 162, 60, 0.1);
-  border: 1px solid rgba(230, 162, 60, 0.2);
+  background: rgba(102, 126, 234, 0.05);
   border-radius: 8px;
-  color: #e6a23c;
-  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
 }
 
-.info-note .el-icon {
-  font-size: 1rem;
-  flex-shrink: 0;
+.readonly-item {
+  display: flex;
+  margin-bottom: 0.75rem;
+}
+
+.readonly-item:last-child {
+  margin-bottom: 0;
+}
+
+.readonly-label {
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.readonly-value {
+  font-size: 0.95rem;
+  color: #333;
+  font-weight: 500;
+}
+
+.edit-form {
+  max-width: 600px;
 }
 
 @media (max-width: 768px) {
@@ -357,8 +641,8 @@ onMounted(() => {
     padding: 1rem;
   }
 
-  .profile-card {
-    max-width: 100%;
+  .info-grid {
+    grid-template-columns: 1fr;
   }
 
   .info-section {
@@ -372,6 +656,12 @@ onMounted(() => {
   .avatar-container {
     width: 100px;
     height: 100px;
+  }
+
+  .profile-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
   }
 }
 </style>

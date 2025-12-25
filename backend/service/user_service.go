@@ -92,3 +92,12 @@ func (*UserService) GetCurrentUserInfo(username string) (model.User, error) {
 	return matchedUser, err
 }
 
+func (*UserService) UpdateUserInfo(user *model.User) (error) {
+	err := user.UpdateUserInfo()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return err
+	}
+
+	return nil
+}
