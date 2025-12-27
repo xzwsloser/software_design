@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import AuthView from '../components/AuthView.vue'
 import SiteList from '../components/SiteList.vue'
 import SiteDetail from '../components/SiteDetail.vue'
+import RecommendedSites from '../components/RecommendedSites.vue'
 import LikedSites from '../components/LikedSites.vue'
 import ViewedSites from '../components/ViewedSites.vue'
 import DataVisualization from '../components/DataVisualization.vue'
@@ -27,6 +28,12 @@ const routes = [
     path: '/sites/:siteIndex',
     name: 'SiteDetail',
     component: SiteDetail,
+    meta: { requiresAuth: true }
+  },
+  {
+    path: '/recommended-sites',
+    name: 'RecommendedSites',
+    component: RecommendedSites,
     meta: { requiresAuth: true }
   },
   {

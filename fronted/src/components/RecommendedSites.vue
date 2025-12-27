@@ -1,9 +1,5 @@
 <template>
-  <div class="liked-sites-container">
-    <!-- <header class="header">
-      <h1>我的喜欢</h1>
-    </header> -->
-
+  <div class="recommended-sites-container">
     <!-- 导航栏 -->
     <nav class="nav-bar">
       <div class="nav-container">
@@ -12,11 +8,11 @@
             <el-icon><List /></el-icon>
             <span>景点列表</span>
           </router-link>
-          <router-link to="/recommended-sites" class="nav-item">
+          <router-link to="/recommended-sites" class="nav-item active">
             <el-icon><MagicStick /></el-icon>
             <span>推荐景点</span>
           </router-link>
-          <router-link to="/liked-sites" class="nav-item active">
+          <router-link to="/liked-sites" class="nav-item">
             <el-icon><Star /></el-icon>
             <span>我的喜欢</span>
           </router-link>
@@ -58,29 +54,29 @@
       </div>
 
       <!-- 空状态 -->
-      <div v-else-if="likedSites.length === 0" class="empty-container">
+      <div v-else-if="recommendedSites.length === 0" class="empty-container">
         <div class="empty-content">
-          <el-icon class="empty-icon"><Star /></el-icon>
-          <h3>还没有点赞的景点</h3>
-          <p>快去景点列表发现喜欢的景点吧！</p>
+          <el-icon class="empty-icon"><MagicStick /></el-icon>
+          <h3>暂无推荐景点</h3>
+          <p>系统正在为您生成个性化推荐</p>
           <el-button type="primary" @click="goToSiteList">浏览景点</el-button>
         </div>
       </div>
 
-      <!-- 点赞景点列表 -->
+      <!-- 推荐景点列表 -->
       <div v-else class="sites-wrapper">
         <div class="sites-grid">
           <div
-            v-for="site in likedSites"
+            v-for="site in recommendedSites"
             :key="site.id"
             class="site-card"
             @click="goToSiteDetail(site.siteIndex)"
           >
             <div class="site-image">
               <img :src="getFirstImage(site.images)" :alt="site.name" />
-              <div class="liked-badge">
-                <el-icon><StarFilled /></el-icon>
-                <span>已点赞</span>
+              <div class="recommended-badge">
+                <el-icon><MagicStick /></el-icon>
+                <span>推荐</span>
               </div>
             </div>
             <div class="site-info">
@@ -107,18 +103,16 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { useLikeStore } from '@/stores/likeStore'
-import { useSiteDetailStore } from '@/stores/siteDetail'
+import { useRecommendationStore } from '../stores/recommendationStore'
 import { ElMessage } from 'element-plus'
-import { List, Star, StarFilled, User, View, DataAnalysis, MagicStick } from '@element-plus/icons-vue'
-import api from '@/axios'
+import { MagicStick, List, Star, View, DataAnalysis, User } from '@element-plus/icons-vue'
+import api from '../axios'
 
 const router = useRouter()
-const likeStore = useLikeStore()
-const siteDetailStore = useSiteDetailStore()
+const recommendationStore = useRecommendationStore()
 
 // 响应式数据
-const likedSites = ref([])
+const recommendedSites = ref([])
 const loading = ref(false)
 const error = ref(null)
 
@@ -152,33 +146,33 @@ const goToSiteDetail = (siteIndex) => {
   router.push(`/sites/${siteIndex}`)
 }
 
-// 获取用户点赞的景点详细信息
-const fetchLikedSitesDetails = async () => {
+// 获取推荐景点详细信息
+const fetchRecommendedSitesDetails = async () => {
   loading.value = true
   error.value = null
 
   try {
-    // 首先获取用户点赞的景点索引列表
-    const likedSiteIndices = await likeStore.fetchUserLikedSites()
+    // 首先获取推荐景点的索引列表
+    const recommendedSiteIndices = await recommendationStore.fetchRecommendedSites()
 
-    if (likedSiteIndices.length === 0) {
-      likedSites.value = []
+    if (recommendedSiteIndices.length === 0) {
+      recommendedSites.value = []
       return
     }
 
     // 根据景点索引列表获取景点详细信息
     const response = await api.post('/site/query/siteList', {
-      siteIndexList: likedSiteIndices
+      siteIndexList: recommendedSiteIndices
     })
 
     if (response.data.success) {
-      likedSites.value = response.data.data.data || []
+      recommendedSites.value = response.data.data.data || []
     } else {
-      error.value = response.data.error || '获取点赞景点详情失败'
+      error.value = response.data.error || '获取推荐景点详情失败'
     }
   } catch (err) {
     error.value = '网络错误，请稍后重试'
-    console.error('Error fetching liked sites details:', err)
+    console.error('Error fetching recommended sites details:', err)
   } finally {
     loading.value = false
   }
@@ -186,40 +180,14 @@ const fetchLikedSitesDetails = async () => {
 
 // 组件挂载时获取数据
 onMounted(() => {
-  fetchLikedSitesDetails()
+  fetchRecommendedSitesDetails()
 })
 </script>
 
 <style scoped>
-.liked-sites-container {
+.recommended-sites-container {
   min-height: 100vh;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.header {
-  background: rgba(255, 255, 255, 0.95);
-  padding: 1rem 2rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-.header h1 {
-  color: #333;
-  font-size: 2rem;
-  font-weight: 600;
-}
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.user-info span {
-  font-weight: 500;
-  color: #666;
 }
 
 /* 导航栏样式 */
@@ -227,6 +195,9 @@ onMounted(() => {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
 .nav-container {
@@ -378,14 +349,14 @@ onMounted(() => {
   transform: scale(1.05);
 }
 
-.liked-badge {
+.recommended-badge {
   position: absolute;
   top: 1rem;
   right: 1rem;
   display: flex;
   align-items: center;
   gap: 0.25rem;
-  background: rgba(255, 107, 107, 0.9);
+  background: rgba(102, 126, 234, 0.9);
   color: white;
   padding: 0.25rem 0.5rem;
   border-radius: 12px;
@@ -446,12 +417,6 @@ onMounted(() => {
 
 /* 响应式设计 */
 @media (max-width: 768px) {
-  .header {
-    padding: 1rem;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
   .main-content {
     padding: 1rem;
   }

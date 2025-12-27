@@ -8,6 +8,10 @@
             <el-icon><List /></el-icon>
             <span>景点列表</span>
           </router-link>
+          <router-link to="/recommended-sites" class="nav-item">
+            <el-icon><MagicStick /></el-icon>
+            <span>推荐景点</span>
+          </router-link>
           <router-link to="/liked-sites" class="nav-item">
             <el-icon><Star /></el-icon>
             <span>我的喜欢</span>
@@ -250,7 +254,7 @@ import { useRouter } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserInfoStore } from '../stores/userInfo'
 import { ElMessage } from 'element-plus'
-import { List, Star, View, User, Edit, DataAnalysis } from '@element-plus/icons-vue'
+import { List, Star, View, User, Edit, DataAnalysis, MagicStick } from '@element-plus/icons-vue'
 
 const router = useRouter()
 const userInfoStore = useUserInfoStore()

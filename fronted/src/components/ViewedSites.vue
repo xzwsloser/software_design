@@ -8,6 +8,10 @@
             <el-icon><List /></el-icon>
             <span>景点列表</span>
           </router-link>
+          <router-link to="/recommended-sites" class="nav-item">
+            <el-icon><MagicStick /></el-icon>
+            <span>推荐景点</span>
+          </router-link>
           <router-link to="/liked-sites" class="nav-item">
             <el-icon><Star /></el-icon>
             <span>我的喜欢</span>
@@ -104,7 +108,7 @@ import { useRouter } from 'vue-router'
 import { useViewStore } from '../stores/viewStore'
 import { useSiteDetailStore } from '@/stores/siteDetail'
 import { ElMessage } from 'element-plus'
-import { View, List, Star, User, DataAnalysis } from '@element-plus/icons-vue'
+import { View, List, Star, User, DataAnalysis, MagicStick } from '@element-plus/icons-vue'
 import api from '../axios'
 
 const router = useRouter()
