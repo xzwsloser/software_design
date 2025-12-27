@@ -37,12 +37,18 @@ type OssConfig struct {
 	SecretKey	string	`json:"secretKey"`
 }
 
+type GrpcConfig struct {
+	Addr 	string	`json:"addr"`
+	Port	int		`json:"port"`
+}
+
 var (
 	serverConfig 	*ServerConfig 	= new(ServerConfig)
 	databaseConfig  *DatabaseConfig = new(DatabaseConfig) 
 	jwtConfig 		*JwtConfig 		= new(JwtConfig)
 	redisConfig 	*RedisConfig    = new(RedisConfig)
 	ossConfig       *OssConfig      = new(OssConfig)
+	grpcConfig		*GrpcConfig		= new(GrpcConfig)
 )
 
 func LoadConfig(filePath string) {
@@ -115,6 +121,17 @@ func LoadConfig(filePath string) {
 	if err != nil {
 		panic("Failed to transform to oss Config")
 	}
+
+	grpcJsonCode, err := json.Marshal(configDict["grpc"].(map[string]interface{}))
+	if err != nil {
+		panic("Failed to Fetch grpc Config")
+	}
+
+	err = json.Unmarshal(grpcJsonCode, grpcConfig)
+	if err != nil {
+		panic("Failed to transform to grpc Config")
+	}
+
 }
 
 func GetServerConfig() *ServerConfig {
@@ -136,3 +153,8 @@ func GetRedisConfig() *RedisConfig {
 func GetOssConfig() *OssConfig {
 	return ossConfig
 }
+
+func GetGrpcConfig() *GrpcConfig {
+	return grpcConfig
+}
+

@@ -72,6 +72,12 @@ func InitRouter(r *gin.Engine) {
 		ossRouter.GET("/touristType", ossHandler.GetTotalTouristTypePic)
 	}
 
+	// 推荐系统接口
+	recRouter := api.Group("/rec", middleware.JwtAuth()) 
+	{
+		recRouter.GET("/siteIdxList", recSysHandler.GetRecSiteIdxList)
+	}
+
 	// 测试接口
 	testRouter := api.Group("/test", middleware.JwtAuth())
 	{

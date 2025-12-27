@@ -59,6 +59,7 @@ func (*UserInfoHandler) UpdateUserInfo(c *gin.Context) {
 	}
 
 	u.Username = userInfo.Username
+	u.Id	   = userInfo.Id
 
 	err = userService.UpdateUserInfo(&u)
 

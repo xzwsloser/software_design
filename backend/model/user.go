@@ -31,6 +31,12 @@ func (u *User) QueryByUsername() (User,error) {
 	return result, err
 }
 
+func (u *User) QueryByUserId() (User, error) {
+	var result User
+	err := GetMySqlClient().Table(u.TableName()).Where("id = ?", u.Id).First(&result).Error
+	return result, err
+}
+
 func (u *User) InsertUser() (error) {
 	err := GetMySqlClient().Table(u.TableName()).Create(u).Error
 	return err

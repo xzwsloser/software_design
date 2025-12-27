@@ -2,7 +2,6 @@ package service
 
 import (
 	"errors"
-
 	"github.com/jinzhu/gorm"
 	"github.com/xzwsloser/software_design/backend/dto"
 	"github.com/xzwsloser/software_design/backend/middleware"
@@ -47,6 +46,14 @@ func (*UserService) Login(user *model.User) (string, error) {
 		return "", UserTokenErr
 	}
 
+	info := &dto.UserInfoInRecSys{
+		User: matchedUser,
+		Update: true,
+		Limit: 200,
+	}
+
+	AddRecTaskToPipeline(info)
+
 	return jwtToken, nil
 }
 
@@ -71,11 +78,21 @@ func (*UserService) Register(user *model.User) (string, error) {
 		Id:       user.Id,
 		Username: user.Username,
 	}
+
 	clamis := jwt.CreatClaims(basicUserInfo)
 	jwtToken, err := jwt.CreateJwtToken(clamis)
 	if err != nil {
 		return "", UserTokenErr
 	}
+
+	// 计算推荐结果
+	info := &dto.UserInfoInRecSys{
+		User: *user,
+		Update: false,
+		Limit: 200,
+	}
+
+	AddRecTaskToPipeline(info)
 
 	return jwtToken, nil
 }
@@ -99,5 +116,16 @@ func (*UserService) UpdateUserInfo(user *model.User) (error) {
 		return err
 	}
 
+	// 更新同时计算推荐结果
+	info := &dto.UserInfoInRecSys{
+		User: *user,
+		Update: true,
+		Limit: 200,
+	}
+
+	AddRecTaskToPipeline(info)
+
 	return nil
 }
+
+

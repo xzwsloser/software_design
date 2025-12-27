@@ -68,3 +68,16 @@
 [2025-12-25 16:54:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
 [2025-12-25 19:00:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
 [2025-12-25 19:11:25] [36m[info][0m main.go:24 main.main Gin Server Listen At localhost:9999 
+[2025-12-27 11:38:25] [36m[info][0m main.go:43 main.main Gin Server Listen At localhost:9999 
+[2025-12-27 11:39:25] [36m[info][0m [GIN] 2025/12/27 - 11:39:31 | 200 |   16.361278ms |       127.0.0.1 | POST     "/api/user/login"
+[2025-12-27 11:39:25] [31m[error][0m rec_sys_client.go:81 github.com/xzwsloser/software_design/backend/rpc.(*RecSysClient).GetRecResult rpc error: code = Unknown desc = Exception calling application: index out of range in self 
+[2025-12-27 11:47:25] [36m[info][0m main.go:43 main.main Gin Server Listen At localhost:9999 
+[2025-12-27 11:47:25] [36m[info][0m [GIN] 2025/12/27 - 11:47:21 | 200 |    3.563419ms |       127.0.0.1 | POST     "/api/user/login"
+[2025-12-27 11:47:25] [31m[error][0m rec_sys_client.go:81 github.com/xzwsloser/software_design/backend/rpc.(*RecSysClient).GetRecResult rpc error: code = Unknown desc = Exception calling application: index out of range in self 
+[2025-12-27 11:50:25] [36m[info][0m main.go:43 main.main Gin Server Listen At localhost:9999 
+[2025-12-27 11:50:25] [36m[info][0m [GIN] 2025/12/27 - 11:50:37 | 200 |    4.047081ms |       127.0.0.1 | POST     "/api/user/login"
+[2025-12-27 11:54:25] [36m[info][0m [GIN] 2025/12/27 - 11:54:14 | 200 |    1.991351ms |       127.0.0.1 | GET      "/api/rec/siteIdxList"
+[2025-12-27 11:55:25] [36m[info][0m [GIN] 2025/12/27 - 11:55:11 | 200 |   15.330539ms |       127.0.0.1 | POST     "/api/user/register"
+[2025-12-27 11:55:25] [36m[info][0m [GIN] 2025/12/27 - 11:55:44 | 200 |     1.06489ms |       127.0.0.1 | GET      "/api/rec/siteIdxList"
+[2025-12-27 11:56:25] [36m[info][0m [GIN] 2025/12/27 - 11:56:17 | 200 |   17.220818ms |       127.0.0.1 | POST     "/api/userInfo/update"
+[2025-12-27 11:56:25] [36m[info][0m [GIN] 2025/12/27 - 11:56:48 | 200 |    1.037854ms |       127.0.0.1 | GET      "/api/rec/siteIdxList"
