@@ -13,6 +13,7 @@ message GetRecResultReq {
     repeated int32 attentionType = 7;
     bool update = 8;
     int32 limit = 9;
+    repeated int32 likedSiteIdxList = 10;
 }
 
 message GetRecResultResp {

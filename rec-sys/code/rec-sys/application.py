@@ -219,13 +219,15 @@ def recommand_by_rec_sys():
     print(f"attention = {attention}")
     print("="*24)
 
-    related_site_idxs, scores = rec_sys.recommand_for_current_user(user_id=0,
+    related_site_idxs, _ = rec_sys.recommand_for_current_user(user_id=0,
                                                            address_id=address_id,
                                                            tourist_type_id=tourist_type,
                                                            like_type=like_type,
                                                            targets_type=targets,
                                                            attention_type=attention,
-                                                           price_sensitive=price_sensitive)
+                                                           price_sensitive=price_sensitive,
+                                                           liked_site_idxs=[])
+
 
 
     connection = pymysql.connect(
@@ -266,14 +268,14 @@ def recommand_by_rec_sys():
             print("="*10 + f"recomment {idx + 1}" + "="*10)
             print(f"景点序号: {site_info['site_idx']}")
             print(f"景点名称: {site_info['name']}")
-            print(f"景点评分: {site_info['score']}")
+            # print(f"景点评分: {site_info['score']}")
             # print(f"景点地址: {site_info['address']}")
-            print(f"景点热度: {site_info['hot_degree']}")
+            # print(f"景点热度: {site_info['hot_degree']}")
             # print(f"景点介绍： \n{site_info['introduce']}\n")
             # print(f"景点开放时间: {site_info['open_time']}")
-            print(f"景点票价: {site_extra_info['price']}")
-            print(f"景点好评数: {site_extra_info['positive_comment_count']}")
-            print(f"景点差评数: {site_extra_info['negative_comment_count']}")
+            # print(f"景点票价: {site_extra_info['price']}")
+            # print(f"景点好评数: {site_extra_info['positive_comment_count']}")
+            # print(f"景点差评数: {site_extra_info['negative_comment_count']}")
             print("="*30)
     except Exception as e:
         print(f"Exception: {e}")
@@ -281,10 +283,10 @@ def recommand_by_rec_sys():
         cursor.close()
         connection.close()
 
-    print('='*10 + 'vector store search result' + '='*10)
-    for idx, (site_idx, score) in enumerate(zip(related_site_idxs, scores)):
-        print(f"Rank [{site_idx}] Score: {score}")
-    print('='*30)
+    # print('='*10 + 'vector store search result' + '='*10)
+    # for idx, (site_idx, score) in enumerate(zip(related_site_idxs, scores)):
+    #     print(f"Rank [{site_idx}] Score: {score}")
+    # print('='*30)
 
 
 

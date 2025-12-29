@@ -56,6 +56,13 @@ func (r *RecSysService) SyncGetRecResult() {
 			continue
 		}
 
+		// 获取用户喜欢景点
+		likedSiteIdxList, err := likeCacheService.QueryLikeOfUser(userId)
+		if err != nil {
+			utils.GetLogger().Error(err.Error())
+			continue
+		}
+
 		recResult, err := rpc.GetRecSysClient().GetRecResult(
 			userId,
 			addressId,
@@ -66,6 +73,7 @@ func (r *RecSysService) SyncGetRecResult() {
 			attentionType,
 			update,
 			limit,
+			likedSiteIdxList,
 		)
 
 		// 存入 redis
@@ -118,6 +126,12 @@ func (*RecSysService) QueryRecommandSiteIdxs(userId int) ([]int, error) {
 			return nil, err
 		}
 
+		likedSiteIdxList, err := likeCacheService.QueryLikeOfUser(userId)
+		if err != nil {
+			utils.GetLogger().Error(err.Error())
+			return nil, err
+		}
+
 		recResult, err := rpc.GetRecSysClient().GetRecResult(
 			userId,
 			addressId,
@@ -128,6 +142,7 @@ func (*RecSysService) QueryRecommandSiteIdxs(userId int) ([]int, error) {
 			attentionType,
 			update,
 			limit,
+			likedSiteIdxList,
 		)
 
 		// 存入 redis

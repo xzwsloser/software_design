@@ -26,6 +26,7 @@ class RecSysRpcServer(rec_sys_pb2_grpc.RecSysServiceServicer):
         print(f"attentionType = {request.attentionType}")
         print(f"update = {request.update}")
         print(f"limit = {request.limit}")
+        print(f"likeSiteIdxList = {request.likedSiteIdxList}")
         print("="*34)
 
         rec_site_idxs, _ = self.rec_sys.recommand_for_current_user(
@@ -37,7 +38,8 @@ class RecSysRpcServer(rec_sys_pb2_grpc.RecSysServiceServicer):
             targets_type=request.targetType,
             attention_type=request.attentionType,
             update=request.update,
-            limit=request.limit
+            limit=request.limit,
+            liked_site_idxs=request.likedSiteIdxList
         )
 
         return rec_sys_pb2.GetRecResultResp(siteIdxList=rec_site_idxs)

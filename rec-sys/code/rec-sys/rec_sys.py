@@ -1,3 +1,4 @@
+from re import search
 from pymilvus import MilvusClient
 from rec_model import (
     UserTower,
@@ -7,7 +8,8 @@ from rec_model import (
 import torch
 from pymysql import Connection
 import pymysql.cursors
-from typing import List, Tuple
+from typing import List, Tuple, final
+import random
 
 MILVUS_ADDRESS = "http://localhost:19530"
 
@@ -80,7 +82,7 @@ class MilvusStore:
 
         self.insert_user_embed(user_id, user_embed)
 
-    def retrieval_site_embed(self, user_embed, query_size=200):
+    def retrieval_site_embed(self, user_embed, query_size=200, remove_self=False):
         resp = self.client.search(
             collection_name=self.site_tb_name,
             anns_field="site_embed",
@@ -94,6 +96,45 @@ class MilvusStore:
 
         site_idx_list = [ record['entity']['site_idx'] for record in resp[0] ]
         distance_list = [ record['distance'] for record in resp[0] ]
+
+        if remove_self:
+            site_idx_list = site_idx_list[1:]
+            distance_list = distance_list[1:]  
+
+        return site_idx_list, distance_list
+    
+    def retrieval_similar_sites(self, 
+                                site_idx: int, 
+                                query_size=200, 
+                                remove_self=True):
+        resp = self.client.query(
+            collection_name=self.site_tb_name,
+            filter=f"site_idx == {site_idx}",
+            output_fields=["site_idx", "site_embed"]
+        )
+
+        if len(resp) == 0:
+            return [], []
+
+        cur_site_embed = resp[0]['site_embed']
+
+        resp = self.client.search(
+            collection_name=self.site_tb_name,
+            anns_field="site_embed",
+            data=[cur_site_embed],
+            limit=query_size+1,
+            output_fields=["site_idx"],
+            search_params={
+                "metric_type": "IP",
+            }
+        )
+
+        site_idx_list = [ record['entity']['site_idx'] for record in resp[0] ]
+        distance_list = [ record['distance'] for record in resp[0] ]
+
+        if remove_self:
+            site_idx_list = site_idx_list[1:]
+            distance_list = distance_list[1:]
 
         return site_idx_list, distance_list
 
@@ -229,6 +270,62 @@ class RecSys:
 
         return new_site_score_pairs
 
+    def similarity_site_with_like(self, 
+                                  liked_site_idxs: List[int]=[],
+                                  limit=200) -> List[int]:
+        """
+        检索与喜欢景点类似的景点列表
+        """
+        if len(liked_site_idxs) == 0:
+            return []
+
+        valid_site_num = 0
+        searched_results = []
+
+        for liked_site_idx in liked_site_idxs:
+            similar_site_idxs, _ =  self.vector_store.retrieval_similar_sites(
+                                                                site_idx=liked_site_idx,
+                                                                query_size=limit,
+                                                                remove_self=True)
+            if len(similar_site_idxs) != 0:
+                valid_site_num += 1
+                searched_results.append(similar_site_idxs)
+        
+        if valid_site_num == 0:
+            return []
+
+        per_site_valid_num = limit // valid_site_num
+        per_site_valid_num = max(per_site_valid_num, 1)
+        recommand_site_list = set()
+
+        while len(recommand_site_list) < limit:
+            for per_site_idx in range(len(searched_results)):
+                travel_site_idx = 0
+                cur_site_list_valid = 0
+                while travel_site_idx < len(searched_results[per_site_idx]):
+                    cur_site_idx = searched_results[per_site_idx][travel_site_idx]
+                    travel_site_idx += 1
+                    if cur_site_idx in recommand_site_list:
+                        continue
+
+                    recommand_site_list.add(cur_site_idx)
+                    if len(recommand_site_list) >= limit:
+                        break
+                    
+                    cur_site_list_valid += 1
+                    if cur_site_list_valid >= per_site_valid_num:
+                        break
+
+                if len(recommand_site_list) >= limit:
+                    break
+
+                searched_results[per_site_idx] = searched_results[per_site_idx][travel_site_idx:]
+
+        recommand_list = list(recommand_site_list)
+        random.shuffle(recommand_list)
+
+        return recommand_list
+
     def recommand_for_current_user(self, user_id: int,
                                          address_id: int,
                                          tourist_type_id: int,
@@ -237,7 +334,9 @@ class RecSys:
                                          targets_type: List[int],
                                          attention_type: List[int],
                                          update=False,
-                                         limit=200):
+                                         limit=200,
+                                         liked_site_idxs: List[int] = [],
+                                         liked_site_rate=0.4):
         user_embed = None
 
         is_updated = False
@@ -288,4 +387,48 @@ class RecSys:
         ranked_site_idxs = [ site_idx for site_idx, _ in ranked_pairs ]
         ranked_site_scores = [ score for _, score in ranked_pairs ]
 
+        if len(liked_site_idxs) != 0:
+            # 多路召回(融合点赞景点信息)
+            simliar_site_idxs = self.similarity_site_with_like(liked_site_idxs=liked_site_idxs,
+                                                            limit=limit)
+                                                            
+            
+            final_recommand_list = set()
+            travel_idx_1 = 0
+            travel_idx_2 = 0
+            list1_maxlen = len(ranked_site_idxs)
+            list2_maxlen = len(simliar_site_idxs)
+
+            while len(final_recommand_list) < limit:
+                if travel_idx_1 < list1_maxlen and travel_idx_2 >= list2_maxlen:
+                    final_recommand_list.add(ranked_site_idxs[travel_idx_1])
+                    travel_idx_1 += 1
+                
+                if travel_idx_1 >= list1_maxlen and travel_idx_2 < list2_maxlen:
+                    final_recommand_list.add(simliar_site_idxs[travel_idx_2])
+                    travel_idx_2 += 1
+                
+                if random.random() < liked_site_rate:
+                    final_recommand_list.add(simliar_site_idxs[travel_idx_2])
+                    travel_idx_2 += 1
+                else:
+                    final_recommand_list.add(ranked_site_idxs[travel_idx_1])
+                    travel_idx_1 += 1
+
+            final_recommand_list = list(final_recommand_list)
+
+            print('='*10 + 'DEBUG' + '='*10)
+            print(ranked_site_idxs)
+            print(f"len(ranked_site_idxs) = {len(ranked_site_idxs)}")
+            print('-'*25)
+            print(simliar_site_idxs)
+            print(f"len(simliar_site_idxs) = {len(simliar_site_idxs)}")
+            print('-'*25)
+            print(final_recommand_list)
+            print(f"len(final_recommand_list) = {len(final_recommand_list)}")
+            print('='*25)
+
+            return final_recommand_list, ranked_site_scores
+
         return ranked_site_idxs, ranked_site_scores
+

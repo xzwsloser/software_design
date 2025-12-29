@@ -5,6 +5,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/xzwsloser/software_design/backend/cache"
+	"github.com/xzwsloser/software_design/backend/dto"
 	"github.com/xzwsloser/software_design/backend/model"
 	"github.com/xzwsloser/software_design/backend/utils"
 )
@@ -57,6 +58,23 @@ func (*LikeService) Like(userId int, siteIndex int) error {
 		utils.GetLogger().Error(err.Error())
 	}
 
+	// 更新推荐景点缓存
+	var u model.User
+	u.Id = int32(userId)
+	matchedUser, err := u.QueryByUserId()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return err
+	}
+
+	info := &dto.UserInfoInRecSys{
+		User: matchedUser,
+		Update: false,
+		Limit: 200,
+	}
+
+	AddRecTaskToPipeline(info)
+
 	return err
 }
 
@@ -84,6 +102,23 @@ func (*LikeService) CancelLike(userId int, siteIndex int) error {
 	if err != nil {
 		utils.GetLogger().Error(err.Error())
 	}
+
+	// 更新推荐景点缓存
+	var u model.User
+	u.Id = int32(userId)
+	matchedUser, err := u.QueryByUserId()
+	if err != nil {
+		utils.GetLogger().Error(err.Error())
+		return err
+	}
+
+	info := &dto.UserInfoInRecSys{
+		User: matchedUser,
+		Update: false,
+		Limit: 200,
+	}
+
+	AddRecTaskToPipeline(info)
 
 	return err
 }

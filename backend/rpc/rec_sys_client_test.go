@@ -24,6 +24,7 @@ func TestGrpcClinet(t * testing.T) {
 		[]int{4,5,6},
 		false,
 		200,
+		[]int{1,2,3,4},
 	)
 
 	if err != nil {
@@ -35,3 +36,4 @@ func TestGrpcClinet(t * testing.T) {
 		t.Logf("siteIdx = %d", siteIdx)
 	}
 }
+

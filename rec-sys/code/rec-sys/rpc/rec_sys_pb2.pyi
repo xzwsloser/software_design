@@ -7,7 +7,7 @@ from typing import ClassVar as _ClassVar, Optional as _Optional
 DESCRIPTOR: _descriptor.FileDescriptor
 
 class GetRecResultReq(_message.Message):
-    __slots__ = ("userId", "addressId", "touristType", "priceSensitive", "likeType", "targetType", "attentionType", "update", "limit")
+    __slots__ = ("userId", "addressId", "touristType", "priceSensitive", "likeType", "targetType", "attentionType", "update", "limit", "likedSiteIdxList")
     USERID_FIELD_NUMBER: _ClassVar[int]
     ADDRESSID_FIELD_NUMBER: _ClassVar[int]
     TOURISTTYPE_FIELD_NUMBER: _ClassVar[int]
@@ -17,6 +17,7 @@ class GetRecResultReq(_message.Message):
     ATTENTIONTYPE_FIELD_NUMBER: _ClassVar[int]
     UPDATE_FIELD_NUMBER: _ClassVar[int]
     LIMIT_FIELD_NUMBER: _ClassVar[int]
+    LIKEDSITEIDXLIST_FIELD_NUMBER: _ClassVar[int]
     userId: int
     addressId: int
     touristType: int
@@ -26,7 +27,8 @@ class GetRecResultReq(_message.Message):
     attentionType: _containers.RepeatedScalarFieldContainer[int]
     update: bool
     limit: int
-    def __init__(self, userId: _Optional[int] = ..., addressId: _Optional[int] = ..., touristType: _Optional[int] = ..., priceSensitive: _Optional[int] = ..., likeType: _Optional[_Iterable[int]] = ..., targetType: _Optional[_Iterable[int]] = ..., attentionType: _Optional[_Iterable[int]] = ..., update: bool = ..., limit: _Optional[int] = ...) -> None: ...
+    likedSiteIdxList: _containers.RepeatedScalarFieldContainer[int]
+    def __init__(self, userId: _Optional[int] = ..., addressId: _Optional[int] = ..., touristType: _Optional[int] = ..., priceSensitive: _Optional[int] = ..., likeType: _Optional[_Iterable[int]] = ..., targetType: _Optional[_Iterable[int]] = ..., attentionType: _Optional[_Iterable[int]] = ..., update: bool = ..., limit: _Optional[int] = ..., likedSiteIdxList: _Optional[_Iterable[int]] = ...) -> None: ...
 
 class GetRecResultResp(_message.Message):
     __slots__ = ("siteIdxList",)

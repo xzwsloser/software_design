@@ -60,7 +60,8 @@ func (r *RecSysClient) GetRecResult(userId int,
 									targetType []int,
 									attentionType []int,
 									update bool,
-									limit int) ([]int, error) {
+									limit int,
+									likedSiteIdxList []int) ([]int, error) {
 	
 	r.mu.Lock()									
 	defer r.mu.Unlock()
@@ -70,11 +71,12 @@ func (r *RecSysClient) GetRecResult(userId int,
 		AddressId: int32(addressId),
 		TouristType: int32(touristType),
 		PriceSensitive: int32(priceSensitive),
-		LikeType: from_int32_to_int(likeType),
-		TargetType: from_int32_to_int(targetType),
-		AttentionType: from_int32_to_int(attentionType),
+		LikeType: from_int_to_int32(likeType),
+		TargetType: from_int_to_int32(targetType),
+		AttentionType: from_int_to_int32(attentionType),
 		Update: update,
 		Limit: int32(limit),
+		LikedSiteIdxList: from_int_to_int32(likedSiteIdxList),
 	})
 
 	if err != nil {
@@ -82,10 +84,10 @@ func (r *RecSysClient) GetRecResult(userId int,
 		return nil, err
 	}
 
-	return from_int_to_int32(result.SiteIdxList), nil
+	return from_int32_to_int(result.SiteIdxList), nil
 }
 
-func from_int32_to_int(raw []int) []int32 {
+func from_int_to_int32(raw []int) []int32 {
 	transformed := make([]int32, 0, len(raw))
 	for _, element := range raw {
 		transformed = append(transformed, int32(element))
@@ -94,7 +96,7 @@ func from_int32_to_int(raw []int) []int32 {
 	return transformed
 }
 
-func from_int_to_int32(raw []int32) []int {
+func from_int32_to_int(raw []int32) []int {
 	transformed := make([]int, 0, len(raw))
 	for _, element := range raw {
 		transformed = append(transformed, int(element))

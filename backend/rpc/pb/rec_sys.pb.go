@@ -22,18 +22,19 @@ const (
 )
 
 type GetRecResultReq struct {
-	state          protoimpl.MessageState `protogen:"open.v1"`
-	UserId         int32                  `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`
-	AddressId      int32                  `protobuf:"varint,2,opt,name=addressId,proto3" json:"addressId,omitempty"`
-	TouristType    int32                  `protobuf:"varint,3,opt,name=touristType,proto3" json:"touristType,omitempty"`
-	PriceSensitive int32                  `protobuf:"varint,4,opt,name=priceSensitive,proto3" json:"priceSensitive,omitempty"`
-	LikeType       []int32                `protobuf:"varint,5,rep,packed,name=likeType,proto3" json:"likeType,omitempty"`
-	TargetType     []int32                `protobuf:"varint,6,rep,packed,name=targetType,proto3" json:"targetType,omitempty"`
-	AttentionType  []int32                `protobuf:"varint,7,rep,packed,name=attentionType,proto3" json:"attentionType,omitempty"`
-	Update         bool                   `protobuf:"varint,8,opt,name=update,proto3" json:"update,omitempty"`
-	Limit          int32                  `protobuf:"varint,9,opt,name=limit,proto3" json:"limit,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	UserId           int32                  `protobuf:"varint,1,opt,name=userId,proto3" json:"userId,omitempty"`
+	AddressId        int32                  `protobuf:"varint,2,opt,name=addressId,proto3" json:"addressId,omitempty"`
+	TouristType      int32                  `protobuf:"varint,3,opt,name=touristType,proto3" json:"touristType,omitempty"`
+	PriceSensitive   int32                  `protobuf:"varint,4,opt,name=priceSensitive,proto3" json:"priceSensitive,omitempty"`
+	LikeType         []int32                `protobuf:"varint,5,rep,packed,name=likeType,proto3" json:"likeType,omitempty"`
+	TargetType       []int32                `protobuf:"varint,6,rep,packed,name=targetType,proto3" json:"targetType,omitempty"`
+	AttentionType    []int32                `protobuf:"varint,7,rep,packed,name=attentionType,proto3" json:"attentionType,omitempty"`
+	Update           bool                   `protobuf:"varint,8,opt,name=update,proto3" json:"update,omitempty"`
+	Limit            int32                  `protobuf:"varint,9,opt,name=limit,proto3" json:"limit,omitempty"`
+	LikedSiteIdxList []int32                `protobuf:"varint,10,rep,packed,name=likedSiteIdxList,proto3" json:"likedSiteIdxList,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
 }
 
 func (x *GetRecResultReq) Reset() {
@@ -129,6 +130,13 @@ func (x *GetRecResultReq) GetLimit() int32 {
 	return 0
 }
 
+func (x *GetRecResultReq) GetLikedSiteIdxList() []int32 {
+	if x != nil {
+		return x.LikedSiteIdxList
+	}
+	return nil
+}
+
 type GetRecResultResp struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	SiteIdxList   []int32                `protobuf:"varint,1,rep,packed,name=siteIdxList,proto3" json:"siteIdxList,omitempty"`
@@ -177,7 +185,7 @@ var File_rec_sys_proto protoreflect.FileDescriptor
 
 const file_rec_sys_proto_rawDesc = "" +
 	"\n" +
-	"\rrec_sys.proto\x12\arec_sys\"\xa1\x02\n" +
+	"\rrec_sys.proto\x12\arec_sys\"\xcd\x02\n" +
 	"\x0fGetRecResultReq\x12\x16\n" +
 	"\x06userId\x18\x01 \x01(\x05R\x06userId\x12\x1c\n" +
 	"\taddressId\x18\x02 \x01(\x05R\taddressId\x12 \n" +
@@ -189,7 +197,9 @@ const file_rec_sys_proto_rawDesc = "" +
 	"targetType\x12$\n" +
 	"\rattentionType\x18\a \x03(\x05R\rattentionType\x12\x16\n" +
 	"\x06update\x18\b \x01(\bR\x06update\x12\x14\n" +
-	"\x05limit\x18\t \x01(\x05R\x05limit\"4\n" +
+	"\x05limit\x18\t \x01(\x05R\x05limit\x12*\n" +
+	"\x10likedSiteIdxList\x18\n" +
+	" \x03(\x05R\x10likedSiteIdxList\"4\n" +
 	"\x10GetRecResultResp\x12 \n" +
 	"\vsiteIdxList\x18\x01 \x03(\x05R\vsiteIdxList2T\n" +
 	"\rRecSysService\x12C\n" +
