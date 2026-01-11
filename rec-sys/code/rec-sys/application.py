@@ -1,4 +1,5 @@
 from pymilvus import MilvusClient
+import time
 from rec_model import SiteTower, TwoTower, UserTower
 import pandas as pd
 import torch
@@ -219,6 +220,8 @@ def recommand_by_rec_sys():
     print(f"attention = {attention}")
     print("="*24)
 
+
+    start = time()
     related_site_idxs, _ = rec_sys.recommand_for_current_user(user_id=0,
                                                            address_id=address_id,
                                                            tourist_type_id=tourist_type,
@@ -264,10 +267,10 @@ def recommand_by_rec_sys():
         cursor.execute(extra_sql)
         site_extra_infos = cursor.fetchall()
 
-        for idx, (site_info, site_extra_info)  in enumerate(zip(site_infos, site_extra_infos)):
-            print("="*10 + f"recomment {idx + 1}" + "="*10)
-            print(f"景点序号: {site_info['site_idx']}")
-            print(f"景点名称: {site_info['name']}")
+        # for idx, (site_info, site_extra_info)  in enumerate(zip(site_infos, site_extra_infos)):
+            # print("="*10 + f"recomment {idx + 1}" + "="*10)
+            # print(f"景点序号: {site_info['site_idx']}")
+            # print(f"景点名称: {site_info['name']}")
             # print(f"景点评分: {site_info['score']}")
             # print(f"景点地址: {site_info['address']}")
             # print(f"景点热度: {site_info['hot_degree']}")
@@ -276,7 +279,7 @@ def recommand_by_rec_sys():
             # print(f"景点票价: {site_extra_info['price']}")
             # print(f"景点好评数: {site_extra_info['positive_comment_count']}")
             # print(f"景点差评数: {site_extra_info['negative_comment_count']}")
-            print("="*30)
+            # print("="*30)
     except Exception as e:
         print(f"Exception: {e}")
     finally:

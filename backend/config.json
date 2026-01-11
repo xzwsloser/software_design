@@ -24,10 +24,10 @@
 
     "oss": {
         "url": "https://rec-sys-1-1332520860.cos.ap-guangzhou.myqcloud.com",
-        "appId": "1332520860",
+        "appId": "<YOUR_API_KEY>",
         "bucket": "rec-sys-1",
-        "secretId": "AKIDjjgU8aprfHgttnUyEH6i6HTjpjQwHQQD",
-        "secretKey": "f9RVVM0RefS2RfhW8XjiT0KRKzRjqkTz"
+        "secretId": "<YOUR_SECRET_ID>",
+        "secretKey": "<YOUR_SECRET_KEY>"
     },
 
     "grpc": {

@@ -1,4 +1,5 @@
 from re import search
+import time
 from pymilvus import MilvusClient
 from rec_model import (
     UserTower,
