@@ -23,7 +23,7 @@
     },
 
     "oss": {
-        "url": "https://rec-sys-1-1332520860.cos.ap-guangzhou.myqcloud.com",
+        "url": "<YOUR_COS_URL>",
         "appId": "<YOUR_API_KEY>",
         "bucket": "rec-sys-1",
         "secretId": "<YOUR_SECRET_ID>",
